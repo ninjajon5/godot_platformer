@@ -23,6 +23,7 @@ var input_direction: float
 var on_floor: bool
 var fast_falling: bool = false
 var gravity_multiplier: int = 1
+var gravity: Vector2
 
 
 func _physics_process(delta: float) -> void:
@@ -43,6 +44,7 @@ func _read_inputs() -> void:
 
 func _read_physics() -> void:
 	on_floor = is_on_floor()
+	gravity = get_gravity()
 
 
 func _update_state() -> void:
@@ -81,7 +83,7 @@ func _apply_gravity(delta: float) -> void:
 			fast_falling = true
 		if fast_falling:
 			gravity_multiplier *= FAST_FALLING_MULTIPLIER
-		velocity += get_gravity() * delta * gravity_multiplier
+		velocity += gravity * delta * gravity_multiplier
 		
 
 func _jump() -> void:

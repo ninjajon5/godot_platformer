@@ -65,4 +65,13 @@ func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
 	player._apply_on_ground_physics(DELTA)
 	
 	assert_true(player.velocity.x < 100)
+
+
+func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
+	player.velocity.y = -100
+	player.on_floor = false
+	player.state = Player.State.JUMPING
+	player._apply_gravity(DELTA)
+	
+	assert_true(player.velocity.y > -100)
 	
