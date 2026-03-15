@@ -48,3 +48,13 @@ func test_jump_from_resting_decreases_y_velocity() -> void:
 	player._jump()
 	
 	assert_true(player.velocity.y < 0)
+	
+
+func test_walk_from_resting_increases_x_velocity() -> void:
+	player.state = Player.State.RESTING
+	player.input_direction = 1
+	player._apply_on_ground_physics()
+	player._update_state()
+	
+	assert_true(player.velocity.x > 0)
+	
