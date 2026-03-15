@@ -59,7 +59,7 @@ func _apply_physics(delta: float) -> void:
 		_jump()
 	
 	if on_floor:
-		_apply_on_ground_physics()
+		_apply_on_ground_physics(delta)
 
 	move_and_slide()
 	
@@ -90,15 +90,15 @@ func _jump() -> void:
 	velocity.y = JUMP_VELOCITY
 	
 
-func _apply_on_ground_physics() -> void:
+func _apply_on_ground_physics(delta: float) -> void:
 	if input_direction:
-		_move_on_ground()
+		_move_on_ground(delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0, FRICTION)
 		
 		
-func _move_on_ground() -> void:
-	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
+func _move_on_ground(delta: float) -> void:
+	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION * delta)
 	
 
 func _flip_animation_based_on_input_direction() -> void:
