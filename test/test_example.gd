@@ -1,7 +1,9 @@
 extends GutTest
 
-func test_passes():
-	assert_eq(1, 1)
+func test_jump_from_idle_updates_state_and_decreases_y_velocity() -> void:
+	var player = Player.new()
+	player.state = Player.State.RESTING
+	player._jump()
 	
-func test_fails():
-	assert_eq(1, 2)
+	assert_eq(player.state, Player.State.JUMPING)
+	assert_true(player.velocity.y < 0)
