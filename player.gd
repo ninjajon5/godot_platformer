@@ -55,13 +55,13 @@ func _update_state() -> void:
 
 
 func _apply_physics(delta: float) -> void:
-	_apply_gravity(delta)
-	
-	if jump_inputted and on_floor:
-		_jump()
-	
 	if on_floor:
 		_apply_on_ground_physics(delta)
+	else:
+		_apply_gravity(delta)
+	
+	if jump_inputted and _can_jump():
+		_jump()
 
 	move_and_slide()
 	
@@ -78,12 +78,11 @@ func _update_animation() -> void:
 
 
 func _apply_gravity(delta: float) -> void:
-	if not on_floor:
-		if crouch_inputted and velocity.y >= 0 and not fast_falling:
-			fast_falling = true
-		if fast_falling:
-			gravity_multiplier *= FAST_FALLING_MULTIPLIER
-		velocity += gravity * delta * gravity_multiplier
+	if crouch_inputted and _can_fast_fall():
+		fast_falling = true
+	if fast_falling:
+		gravity_multiplier *= FAST_FALLING_MULTIPLIER
+	velocity += gravity * delta * gravity_multiplier
 		
 
 func _jump() -> void:
@@ -109,3 +108,11 @@ func _flip_animation_based_on_input_direction() -> void:
 
 func _should_flip_animation() -> bool:
 	return input_direction < 0
+	
+
+func _can_jump() -> bool:
+	return state in [State.RESTING, State.WALKING]
+
+
+func _can_fast_fall() -> bool:
+	return not fast_falling and state == State.FALLING
