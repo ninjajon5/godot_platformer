@@ -71,6 +71,7 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 	player.velocity.y = -100
 	player.on_floor = false
 	player.state = Player.State.JUMPING
+	player.gravity = Vector2(0, 10)
 	player._apply_gravity(DELTA)
 	
 	assert_true(player.velocity.y > -100)
