@@ -2,11 +2,11 @@ class_name Player
 extends CharacterBody2D
 
 # constants
-const SPEED := 600.0
-const ACCELERATION := 100.0
-const FRICTION := 100.0
-const JUMP_VELOCITY := -400.0
-const FAST_FALLING_MULTIPLIER := 2
+const SPEED: float = 600.0
+const ACCELERATION: float = 5000.0
+const FRICTION: float = 5000.0
+const JUMP_VELOCITY: float = -400.0
+const FAST_FALLING_MULTIPLIER: int = 2
 
 # state tracking
 enum State { RESTING, WALKING, JUMPING, FALLING }
@@ -81,7 +81,7 @@ func _apply_on_ground_physics(delta: float) -> void:
 	if input_direction:
 		_move_on_ground(delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0, FRICTION)
+		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
 
 
 func _apply_gravity(delta: float) -> void:
