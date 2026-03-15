@@ -54,7 +54,15 @@ func test_walk_from_resting_increases_x_velocity() -> void:
 	player.state = Player.State.RESTING
 	player.input_direction = 1
 	player._apply_on_ground_physics()
-	player._update_state()
 	
 	assert_true(player.velocity.x > 0)
+
+
+func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
+	player.velocity.x = 100
+	player.state = Player.State.RESTING
+	player.input_direction = 0
+	player._apply_on_ground_physics()
+	
+	assert_true(player.velocity.x < 100)
 	
