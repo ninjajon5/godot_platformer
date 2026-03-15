@@ -77,6 +77,13 @@ func _update_animation() -> void:
 		_flip_animation_based_on_input_direction()
 
 
+func _apply_on_ground_physics(delta: float) -> void:
+	if input_direction:
+		_move_on_ground(delta)
+	else:
+		velocity.x = move_toward(velocity.x, 0, FRICTION)
+
+
 func _apply_gravity(delta: float) -> void:
 	if crouch_inputted and _can_fast_fall():
 		fast_falling = true
@@ -89,26 +96,19 @@ func _jump() -> void:
 	gravity_multiplier = 1
 	fast_falling = false
 	velocity.y = JUMP_VELOCITY
-	
 
-func _apply_on_ground_physics(delta: float) -> void:
-	if input_direction:
-		_move_on_ground(delta)
-	else:
-		velocity.x = move_toward(velocity.x, 0, FRICTION)
-		
-		
+
 func _move_on_ground(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION * delta)
-	
+
 
 func _flip_animation_based_on_input_direction() -> void:
 	$AnimatedSprite2D.flip_h = _should_flip_animation()
-		
+
 
 func _should_flip_animation() -> bool:
 	return input_direction < 0
-	
+
 
 func _can_jump() -> bool:
 	return state in [State.RESTING, State.WALKING]
