@@ -2,9 +2,16 @@ extends GutTest
 
 const DELTA: float = 1.0 / 60.0
 
+var player: Player
+
+func before_each() -> void:
+	player = Player.new()
+	
+func after_each() -> void:
+	player.free()
+	
 
 func test_jump_from_resting_decreases_y_velocity() -> void:
-	var player: Player = Player.new()
 	player.state = Player.State.RESTING
 	player._jump()
 	
@@ -12,9 +19,16 @@ func test_jump_from_resting_decreases_y_velocity() -> void:
 
 
 func test_airborne_with_upwards_velocity_causes_jumping_state() -> void:
-	var player: Player = Player.new()
 	player.on_floor = false
 	player.velocity = Vector2(0, -100)
 	player._update_state()
 	
 	assert_eq(player.state, Player.State.JUMPING)
+	
+
+func test_airborne_with_downwards_velocity_causes_falling_state() -> void:
+	player.on_floor = false
+	player.velocity = Vector2(0, 100)
+	player._update_state()
+	
+	assert_eq(player.state, Player.State.FALLING)
