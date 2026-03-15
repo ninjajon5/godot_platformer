@@ -1,7 +1,5 @@
 extends GutTest
 
-const DELTA: float = 1.0 / 60.0
-
 var player: Player
 
 func before_each() -> void:
@@ -53,7 +51,7 @@ func test_jump_from_resting_decreases_y_velocity() -> void:
 func test_input_direction_from_resting_increases_x_velocity() -> void:
 	player.state = Player.State.RESTING
 	player.input_direction = 1
-	player._apply_on_ground_physics(DELTA)
+	player._apply_on_ground_physics()
 	
 	assert_true(player.velocity.x > 0)
 
@@ -62,7 +60,7 @@ func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
 	player.velocity.x = 100
 	player.state = Player.State.RESTING
 	player.input_direction = 0
-	player._apply_on_ground_physics(DELTA)
+	player._apply_on_ground_physics()
 	
 	assert_true(player.velocity.x < 100)
 
@@ -71,7 +69,7 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 	player.velocity.y = -100
 	player.on_floor = false
 	player.state = Player.State.JUMPING
-	player.gravity = Vector2(0, 10)
-	player._apply_gravity(DELTA)
+	player.gravity_vector = Vector2(0, player.GRAVITY)
+	player._apply_gravity()
 	
 	assert_true(player.velocity.y > -100)

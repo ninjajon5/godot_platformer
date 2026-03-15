@@ -2,10 +2,11 @@ class_name Player
 extends CharacterBody2D
 
 # constants
-const SPEED: float = 600.0
-const ACCELERATION: float = 5000.0
-const FRICTION: float = 5000.0
-const JUMP_VELOCITY: float = -400.0
+const SPEED: float = 800.0
+const ACCELERATION: float = 100.0
+const FRICTION: float = 100.0
+const GRAVITY: float = 30.0
+const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
 
 # state tracking
@@ -23,14 +24,14 @@ var input_direction: float
 var on_floor: bool
 var fast_falling: bool = false
 var gravity_multiplier: int = 1
-var gravity: Vector2
+var gravity_vector: Vector2
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	_read_inputs()
 	_read_physics()
 	_update_state()
-	_apply_physics(delta)
+	_apply_physics()
 	_update_animation()
 	
 
@@ -44,7 +45,7 @@ func _read_inputs() -> void:
 
 func _read_physics() -> void:
 	on_floor = is_on_floor()
-	gravity = get_gravity()
+	gravity_vector = Vector2(0, GRAVITY)
 
 
 func _update_state() -> void:
@@ -54,11 +55,11 @@ func _update_state() -> void:
 		state = State.RESTING if velocity.x == 0 else State.WALKING
 
 
-func _apply_physics(delta: float) -> void:
+func _apply_physics() -> void:
 	if on_floor:
-		_apply_on_ground_physics(delta)
+		_apply_on_ground_physics()
 	else:
-		_apply_gravity(delta)
+		_apply_gravity()
 	
 	if jump_inputted and _can_jump():
 		_jump()
@@ -77,19 +78,19 @@ func _update_animation() -> void:
 		_flip_animation_based_on_input_direction()
 
 
-func _apply_on_ground_physics(delta: float) -> void:
+func _apply_on_ground_physics() -> void:
 	if input_direction:
-		_move_on_ground(delta)
+		_move_on_ground()
 	else:
-		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
+		velocity.x = move_toward(velocity.x, 0, FRICTION)
 
 
-func _apply_gravity(delta: float) -> void:
+func _apply_gravity() -> void:
 	if crouch_inputted and _can_fast_fall():
 		fast_falling = true
 	if fast_falling:
 		gravity_multiplier *= FAST_FALLING_MULTIPLIER
-	velocity += gravity * delta * gravity_multiplier
+	velocity += gravity_vector * gravity_multiplier
 		
 
 func _jump() -> void:
@@ -98,8 +99,8 @@ func _jump() -> void:
 	velocity.y = JUMP_VELOCITY
 
 
-func _move_on_ground(delta: float) -> void:
-	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION * delta)
+func _move_on_ground() -> void:
+	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
 
 
 func _flip_animation_based_on_input_direction() -> void:
