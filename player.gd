@@ -38,7 +38,7 @@ func _read_inputs() -> void:
 	crouch_inputted = Input.is_action_just_pressed("crouch")
 	left_inputted = Input.is_action_just_pressed("left")
 	right_inputted = Input.is_action_just_pressed("right")
-	input_direction = Input.get_axis("move_left", "move_right")
+	input_direction = Input.get_axis("left", "right")
 
 
 func _read_physics() -> void:
