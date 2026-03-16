@@ -10,7 +10,7 @@ const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
 
 # state tracking
-enum State { RESTING, WALKING, JUMPING, FALLING }
+enum State { RESTING, WALKING, DASHING, JUMPING, FALLING }
 var state: State = State.RESTING
 
 # input attributes
