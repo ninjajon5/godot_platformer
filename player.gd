@@ -8,10 +8,12 @@ const FRICTION: float = 100.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
+const DASHING_FRAMES: int = 30
 
 # state tracking
 enum State { RESTING, WALKING, DASHING, JUMPING, FALLING }
 var state: State = State.RESTING
+var dashing_frame_count: int = 0
 
 # input attributes
 var jump_inputted: bool
@@ -52,7 +54,10 @@ func _update_state() -> void:
 	if not on_floor:
 		state = State.JUMPING if velocity.y < 0 else State.FALLING
 	else:
-		state = State.RESTING if velocity.x == 0 else State.WALKING
+		if velocity.x == 0:
+			state = State.RESTING
+		else:
+			state = State.WALKING if dashing_frame_count > DASHING_FRAMES else State.DASHING
 
 
 func _apply_physics() -> void:
@@ -100,7 +105,11 @@ func _jump() -> void:
 
 
 func _move_on_ground() -> void:
-	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
+	if state == State.DASHING:
+		velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
+		dashing_frame_count += 1
+	else:
+		velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
 
 
 func _flip_animation_based_on_input_direction() -> void:

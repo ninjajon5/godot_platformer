@@ -44,7 +44,7 @@ func test_grounded_with_non_zero_velocity_causes_walking_or_dashing_state() -> v
 func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(100, 0)
-	player.dashing_frame_count = 1
+	player.dashing_frame_count = player.DASHING_FRAMES - 1
 	player._update_state()
 	
 	assert_eq(player.state, Player.State.DASHING)
