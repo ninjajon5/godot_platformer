@@ -33,12 +33,21 @@ func test_grounded_with_no_velocity_causes_resting_state() -> void:
 	assert_eq(player.state, Player.State.RESTING)
 
 
-func test_grounded_with_non_zero_velocity_causes_walking_state() -> void:
+func test_grounded_with_non_zero_velocity_causes_walking_or_dashing_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(100, 0)
 	player._update_state()
 	
 	assert_true(player.state in [Player.State.WALKING, Player.State.DASHING])
+
+
+func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_state() -> void:
+	player.on_floor = true
+	player.velocity = Vector2(100, 0)
+	player.dashing_frame_count = 1
+	player._update_state()
+	
+	assert_eq(player.state, Player.State.DASHING)
 
 
 func test_jump_from_resting_decreases_y_velocity() -> void:
