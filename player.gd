@@ -72,40 +72,27 @@ func _apply_inputs_depending_on_state() -> void:
 
 
 func _apply_inputs_to_resting_state() -> void:
-	_apply_directional_inputs()
+	if input_direction:
+		_dash()
 	if jump_inputted:
 		_jump()
-	$AnimatedSprite2D.play("resting")
-
-
-func _apply_directional_inputs() -> void:
-	if input_direction:
-		_move_on_ground()
-	else:
-		velocity.x = move_toward(velocity.x, 0, FRICTION)
 
 
 func _apply_inputs_to_walking_state() -> void:
-	_apply_directional_inputs()
-	if jump_inputted:
-		_jump()
+	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
-	if input_direction:
-		_flip_animation_based_on_input_direction()
+	_flip_animation_based_on_input_direction()
 
 
 func _apply_inputs_to_dashing_state() -> void:
-	_apply_directional_inputs()
-	if jump_inputted:
-		_jump()
-	$AnimatedSprite2D.play("resting")
 	if input_direction:
-		_flip_animation_based_on_input_direction()
+		_dash()
+	else:
+		_apply_friction()
 
 
 func _apply_inputs_to_jumping_state() -> void:
 	_apply_gravity()
-	$AnimatedSprite2D.play("jumping")
 
 
 func _apply_gravity() -> void:
@@ -114,20 +101,26 @@ func _apply_gravity() -> void:
 	if fast_falling:
 		gravity_multiplier *= FAST_FALLING_MULTIPLIER
 	velocity += gravity_vector * gravity_multiplier
+	$AnimatedSprite2D.play("jumping")
+
+
+func _apply_friction() -> void:
+	velocity.x = move_toward(velocity.x, 0, FRICTION)
 		
 
 func _jump() -> void:
 	gravity_multiplier = 1
 	fast_falling = false
 	velocity.y = JUMP_VELOCITY
+	$AnimatedSprite2D.play("jumping")
 
 
-func _move_on_ground() -> void:
-	if state == State.DASHING:
-		velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
-		dashing_frame_count += 1
-	else:
-		velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
+func _dash() -> void:
+	velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
+	dashing_frame_count += 1
+	
+	$AnimatedSprite2D.play("resting")
+	_flip_animation_based_on_input_direction()
 
 
 func _flip_animation_based_on_input_direction() -> void:
