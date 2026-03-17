@@ -11,7 +11,7 @@ const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 30
 
 # state tracking
-enum State { RESTING, WALKING, DASHING, JUMPING, FALLING }
+enum State { RESTING, WALKING, DASHING, JUMPING, FALLING, FAST_FALLING }
 var state: State = State.RESTING
 var dashing_frame_count: int = 0
 
@@ -25,7 +25,6 @@ var input_direction: float
 # physics attributes
 var on_floor: bool
 var fast_falling: bool = false
-var gravity_multiplier: int = 1
 var gravity_vector: Vector2
 
 
@@ -33,7 +32,7 @@ func _physics_process(_delta: float) -> void:
 	_read_inputs()
 	_read_physics()
 	
-	_encode_physics_into_state()
+	_update_state_depending_on_physics()
 	_apply_inputs_depending_on_state()
 	
 	move_and_slide()
@@ -52,9 +51,12 @@ func _read_inputs() -> void:
 	input_direction = Input.get_axis("left", "right")
 
 
-func _encode_physics_into_state() -> void:
+func _update_state_depending_on_physics() -> void:
 	if not on_floor:
-		state = State.JUMPING if velocity.y < 0 else State.FALLING
+		if velocity.y < 0:
+			state = State.JUMPING
+		else:
+			state = State.FALLING if state != State.FAST_FALLING else State.FAST_FALLING
 	else:
 		if velocity.x == 0:
 			state = State.RESTING
@@ -68,7 +70,8 @@ func _apply_inputs_depending_on_state() -> void:
 		State.WALKING: _apply_inputs_to_walking_state()
 		State.DASHING: _apply_inputs_to_dashing_state()
 		State.JUMPING: _apply_inputs_to_jumping_state()
-		State.FALLING: _apply_inputs_to_jumping_state()
+		State.FALLING: _apply_inputs_to_falling_state()
+		State.FAST_FALLING: _apply_inputs_to_fast_falling_state()
 
 
 func _apply_inputs_to_resting_state() -> void:
@@ -79,9 +82,13 @@ func _apply_inputs_to_resting_state() -> void:
 
 
 func _apply_inputs_to_walking_state() -> void:
-	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
-	$AnimatedSprite2D.play("walking")
-	_flip_animation_based_on_input_direction()
+	if input_direction:
+		_walk()
+	else:
+		_apply_friction()
+		
+	if jump_inputted:
+		_jump()
 
 
 func _apply_inputs_to_dashing_state() -> void:
@@ -89,17 +96,28 @@ func _apply_inputs_to_dashing_state() -> void:
 		_dash()
 	else:
 		_apply_friction()
+		
+	if jump_inputted:
+		_jump()
 
 
 func _apply_inputs_to_jumping_state() -> void:
-	_apply_gravity()
+	_apply_gravity(1)
 
 
-func _apply_gravity() -> void:
-	if crouch_inputted and _can_fast_fall():
-		fast_falling = true
-	if fast_falling:
-		gravity_multiplier *= FAST_FALLING_MULTIPLIER
+func _apply_inputs_to_falling_state() -> void:
+	if crouch_inputted:
+		state = State.FAST_FALLING
+		_apply_gravity(FAST_FALLING_MULTIPLIER)
+	else:
+		_apply_gravity(1)
+
+
+func _apply_inputs_to_fast_falling_state() -> void:
+	_apply_gravity(FAST_FALLING_MULTIPLIER)
+
+
+func _apply_gravity(gravity_multiplier: int) -> void:
 	velocity += gravity_vector * gravity_multiplier
 	$AnimatedSprite2D.play("jumping")
 
@@ -109,7 +127,6 @@ func _apply_friction() -> void:
 		
 
 func _jump() -> void:
-	gravity_multiplier = 1
 	fast_falling = false
 	velocity.y = JUMP_VELOCITY
 	$AnimatedSprite2D.play("jumping")
@@ -123,9 +140,11 @@ func _dash() -> void:
 	_flip_animation_based_on_input_direction()
 
 
+func _walk() -> void:
+	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
+	$AnimatedSprite2D.play("walking")
+	_flip_animation_based_on_input_direction()
+
+
 func _flip_animation_based_on_input_direction() -> void:
 	$AnimatedSprite2D.flip_h = true if input_direction < 0 else false
-
-
-func _can_fast_fall() -> bool:
-	return not fast_falling and state == State.FALLING
