@@ -32,10 +32,17 @@ var gravity_vector: Vector2
 func _physics_process(_delta: float) -> void:
 	_read_inputs()
 	_read_physics()
-	_update_state()
-	_apply_physics()
-	_update_animation()
 	
+	_encode_physics_into_state()
+	_apply_inputs_depending_on_state()
+	
+	move_and_slide()
+
+
+func _read_physics() -> void:
+	on_floor = is_on_floor()
+	gravity_vector = Vector2(0, GRAVITY)
+
 
 func _read_inputs() -> void:
 	jump_inputted = Input.is_action_just_pressed("jump")
@@ -45,12 +52,7 @@ func _read_inputs() -> void:
 	input_direction = Input.get_axis("left", "right")
 
 
-func _read_physics() -> void:
-	on_floor = is_on_floor()
-	gravity_vector = Vector2(0, GRAVITY)
-
-
-func _update_state() -> void:
+func _encode_physics_into_state() -> void:
 	if not on_floor:
 		state = State.JUMPING if velocity.y < 0 else State.FALLING
 	else:
@@ -60,34 +62,40 @@ func _update_state() -> void:
 			state = State.WALKING if dashing_frame_count > DASHING_FRAMES else State.DASHING
 
 
-func _apply_physics() -> void:
-	if on_floor:
-		_apply_on_ground_physics()
-	else:
-		_apply_gravity()
-	
-	if jump_inputted and _can_jump():
-		_jump()
-
-	move_and_slide()
-	
-
-func _update_animation() -> void:
+func _apply_inputs_depending_on_state() -> void:
 	match state:
-		State.RESTING: $AnimatedSprite2D.play("resting")
-		State.WALKING: $AnimatedSprite2D.play("walking")
-		State.JUMPING: $AnimatedSprite2D.play("jumping")
-		State.FALLING: $AnimatedSprite2D.play("jumping")
-		
-	if on_floor and input_direction:
-		_flip_animation_based_on_input_direction()
+		State.RESTING: _apply_inputs_to_resting_state()
+		State.WALKING: _apply_inputs_to_walking_state()
+		State.DASHING: _apply_inputs_to_dashing_state()
+		State.JUMPING: _apply_inputs_to_jumping_state()
+		State.FALLING: _apply_inputs_to_jumping_state()
 
 
-func _apply_on_ground_physics() -> void:
+func _apply_inputs_to_resting_state() -> void:
 	if input_direction:
 		_move_on_ground()
 	else:
 		velocity.x = move_toward(velocity.x, 0, FRICTION)
+		
+	if jump_inputted:
+		_jump()
+
+
+func _apply_inputs_to_walking_state() -> void:
+	_apply_inputs_to_resting_state()
+	$AnimatedSprite2D.play("walking")
+	_flip_animation_based_on_input_direction()
+
+
+func _apply_inputs_to_dashing_state() -> void:
+	_apply_inputs_to_resting_state()
+	$AnimatedSprite2D.play("resting")
+	_flip_animation_based_on_input_direction()
+
+
+func _apply_inputs_to_jumping_state() -> void:
+	_apply_gravity()
+	$AnimatedSprite2D.play("jumping")
 
 
 func _apply_gravity() -> void:
@@ -113,15 +121,7 @@ func _move_on_ground() -> void:
 
 
 func _flip_animation_based_on_input_direction() -> void:
-	$AnimatedSprite2D.flip_h = _should_flip_animation()
-
-
-func _should_flip_animation() -> bool:
-	return input_direction < 0
-
-
-func _can_jump() -> bool:
-	return state in [State.RESTING, State.WALKING]
+	$AnimatedSprite2D.flip_h = true if input_direction < 0 else false
 
 
 func _can_fast_fall() -> bool:
