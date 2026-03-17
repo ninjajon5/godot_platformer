@@ -60,8 +60,6 @@ func _update_state_depending_on_physics() -> void:
 	else:
 		if velocity.x == 0:
 			state = State.RESTING
-		else:
-			state = State.WALKING if dashing_frame_count > DASHING_FRAMES else State.DASHING
 
 
 func _apply_inputs_depending_on_state() -> void:
@@ -77,6 +75,10 @@ func _apply_inputs_depending_on_state() -> void:
 func _apply_inputs_to_resting_state() -> void:
 	if input_direction:
 		_dash()
+	else:
+		dashing_frame_count = 0
+		$AnimatedSprite2D.play("resting")
+		
 	if jump_inputted:
 		_jump()
 
@@ -93,8 +95,12 @@ func _apply_inputs_to_walking_state() -> void:
 
 func _apply_inputs_to_dashing_state() -> void:
 	if input_direction:
-		_dash()
+		if dashing_frame_count < DASHING_FRAMES:
+			_dash()
+		else:
+			_walk()
 	else:
+		dashing_frame_count = 0
 		_apply_friction()
 		
 	if jump_inputted:
@@ -133,6 +139,7 @@ func _jump() -> void:
 
 
 func _dash() -> void:
+	state = State.DASHING
 	velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
 	dashing_frame_count += 1
 	
@@ -141,6 +148,7 @@ func _dash() -> void:
 
 
 func _walk() -> void:
+	state = State.WALKING
 	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()

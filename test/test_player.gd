@@ -77,33 +77,6 @@ func test_grounded_with_no_velocity_or_input_causes_resting_animation() -> void:
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
 
 
-func test_grounded_with_non_zero_velocity_causes_walking_or_dashing_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(100, 0)
-	player._update_state_depending_on_physics()
-	
-	assert_true(player.state in [Player.State.WALKING, Player.State.DASHING])
-
-
-func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(100, 0)
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
-	player._update_state_depending_on_physics()
-	
-	assert_eq(player.state, Player.State.DASHING)
-
-
-func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(100, 0)
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
-	player._update_state_depending_on_physics()
-	
-	# use "resting" animation for dashing
-	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
-
-
 func test_jump_from_resting_decreases_y_velocity() -> void:
 	player.state = Player.State.RESTING
 	player._jump()
@@ -141,6 +114,42 @@ func test_input_direction_from_resting_increases_x_velocity() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x > 0)
+
+
+func test_input_direction_from_resting_causes_dashing_state() -> void:
+	player.state = Player.State.RESTING
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.state, Player.State.DASHING)
+	
+
+func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
+	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.state, Player.State.DASHING)
+
+
+func test_input_direction_while_dashing_above_dash_timer_causes_walking_state() -> void:
+	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES + 1
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.state, Player.State.WALKING)
+
+
+func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:
+	player.on_floor = true
+	player.velocity = Vector2(100, 0)
+	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player._update_state_depending_on_physics()
+	
+	# use "resting" animation for dashing
+	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
 
 
 func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
