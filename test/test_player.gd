@@ -3,7 +3,7 @@ extends GutTest
 var player: Player
 
 func before_each() -> void:
-	player = load("res://player.tscn").instantiate()
+	player = autoqfree(load("res://player.tscn").instantiate())
 	add_child(player)
 	player.state = Player.State.RESTING
 	player.jump_inputted = false
@@ -140,6 +140,15 @@ func test_input_direction_while_dashing_above_dash_timer_causes_walking_state() 
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.WALKING)
+
+
+func test_releasing_input_direction_while_dashing_causes_dash_release_state() -> void:
+	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.input_direction = 0
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.state, Player.State.DASH_RELEASE)
 
 
 func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:

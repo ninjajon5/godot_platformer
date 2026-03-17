@@ -11,7 +11,7 @@ const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 30
 
 # state tracking
-enum State { RESTING, WALKING, DASHING, JUMPING, FALLING, FAST_FALLING }
+enum State { RESTING, WALKING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
 var state: State = State.RESTING
 var dashing_frame_count: int = 0
 
@@ -100,6 +100,7 @@ func _apply_inputs_to_dashing_state() -> void:
 		else:
 			_walk()
 	else:
+		state = State.DASH_RELEASE
 		dashing_frame_count = 0
 		_apply_friction()
 		
