@@ -8,7 +8,7 @@ const FRICTION: float = 100.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
-const DASHING_FRAMES: int = 30
+const DASHING_FRAMES: int = 10
 
 # state tracking
 enum State { RESTING, WALKING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
@@ -52,7 +52,7 @@ func _read_inputs() -> void:
 
 
 func _check_for_physics_transitions() -> void:
-	if not on_floor and velocity.y > 0 and state != State.FAST_FALLING:
+	if not on_floor and velocity.y >= 0 and state != State.FAST_FALLING:
 			state = State.FALLING
 	elif on_floor and velocity.x == 0:
 			state = State.RESTING
@@ -157,7 +157,7 @@ func _dash() -> void:
 	if _input_opposes_direction():
 		velocity.x = 0	# pivot
 	
-	velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
+	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION * 2)
 	dashing_frame_count += 1
 	
 	$AnimatedSprite2D.play("resting")

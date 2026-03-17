@@ -33,7 +33,15 @@ func test_resting_with_jump_inputted_causes_jumping_state() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.JUMPING)
+
+
+func test_airborne_with_zero_velocity_causes_falling_state() -> void:
+	player.on_floor = false
+	player.velocity = Vector2(0, 0)
+	player._check_for_physics_transitions()
 	
+	assert_eq(player.state, Player.State.FALLING)
+
 
 func test_airborne_with_downwards_velocity_causes_falling_state() -> void:
 	player.on_floor = false
