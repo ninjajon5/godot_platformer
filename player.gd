@@ -32,7 +32,7 @@ func _physics_process(_delta: float) -> void:
 	_read_inputs()
 	_read_physics()
 	
-	_update_state_depending_on_physics()
+	_check_for_physics_transitions()
 	_apply_inputs_depending_on_state()
 	
 	move_and_slide()
@@ -51,14 +51,10 @@ func _read_inputs() -> void:
 	input_direction = Input.get_axis("left", "right")
 
 
-func _update_state_depending_on_physics() -> void:
-	if not on_floor:
-		if velocity.y < 0:
-			state = State.JUMPING
-		else:
-			state = State.FALLING if state != State.FAST_FALLING else State.FAST_FALLING
-	else:
-		if velocity.x == 0:
+func _check_for_physics_transitions() -> void:
+	if not on_floor and velocity.y > 0 and state != State.FAST_FALLING:
+			state = State.FALLING
+	elif on_floor and velocity.x == 0:
 			state = State.RESTING
 
 
@@ -118,6 +114,7 @@ func _apply_inputs_to_falling_state() -> void:
 		_apply_gravity(FAST_FALLING_MULTIPLIER)
 	else:
 		_apply_gravity(1)
+	$AnimatedSprite2D.play("jumping")
 
 
 func _apply_inputs_to_fast_falling_state() -> void:
@@ -134,6 +131,7 @@ func _apply_friction() -> void:
 		
 
 func _jump() -> void:
+	state = State.JUMPING
 	fast_falling = false
 	velocity.y = JUMP_VELOCITY
 	$AnimatedSprite2D.play("jumping")
@@ -157,3 +155,7 @@ func _walk() -> void:
 
 func _flip_animation_based_on_input_direction() -> void:
 	$AnimatedSprite2D.flip_h = true if input_direction < 0 else false
+
+
+func _input_opposes_direction() -> bool:
+	return sign(input_direction) != sign(velocity.x) and input_direction != 0

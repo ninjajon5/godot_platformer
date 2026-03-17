@@ -27,10 +27,10 @@ func after_each() -> void:
 # =================================
 
 
-func test_airborne_with_upwards_velocity_causes_jumping_state() -> void:
-	player.on_floor = false
-	player.velocity = Vector2(0, -100)
-	player._update_state_depending_on_physics()
+func test_resting_with_jump_inputted_causes_jumping_state() -> void:
+	player.state = Player.State.RESTING
+	player.jump_inputted = true
+	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.JUMPING)
 	
@@ -38,7 +38,7 @@ func test_airborne_with_upwards_velocity_causes_jumping_state() -> void:
 func test_airborne_with_downwards_velocity_causes_falling_state() -> void:
 	player.on_floor = false
 	player.velocity = Vector2(0, 100)
-	player._update_state_depending_on_physics()
+	player._check_for_physics_transitions()
 	
 	assert_eq(player.state, Player.State.FALLING)
 
@@ -48,15 +48,17 @@ func test_falling_with_crouch_input_leads_to_fast_falling_state() -> void:
 	player.velocity = Vector2(0, 100)
 	player.state = Player.State.FALLING
 	player.crouch_inputted = true
-	player._update_state_depending_on_physics()
+	player._check_for_physics_transitions()
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.FAST_FALLING)
 
 
-func test_airborne_causes_jumping_animation() -> void:
+func test_falling_causes_jumping_animation() -> void:
 	player.on_floor = false
-	player._update_state_depending_on_physics()
+	player.state = Player.State.FALLING
+	player.crouch_inputted = false
+	player._check_for_physics_transitions()
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "jumping")
@@ -65,7 +67,7 @@ func test_airborne_causes_jumping_animation() -> void:
 func test_grounded_with_no_velocity_causes_resting_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(0, 0)
-	player._update_state_depending_on_physics()
+	player._check_for_physics_transitions()
 	
 	assert_eq(player.state, Player.State.RESTING)
 
@@ -73,7 +75,7 @@ func test_grounded_with_no_velocity_causes_resting_state() -> void:
 func test_grounded_with_no_velocity_or_input_causes_resting_animation() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(0, 0)
-	player._update_state_depending_on_physics()
+	player._check_for_physics_transitions()
 	player._apply_inputs_depending_on_state()
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
 
@@ -167,7 +169,7 @@ func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_anima
 	player.on_floor = true
 	player.velocity = Vector2(100, 0)
 	player.dashing_frame_count = player.DASHING_FRAMES - 1
-	player._update_state_depending_on_physics()
+	player._check_for_physics_transitions()
 	
 	# use "resting" animation for dashing
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
