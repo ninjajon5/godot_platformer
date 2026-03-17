@@ -34,7 +34,9 @@ func _physics_process(_delta: float) -> void:
 	_read_physics()
 	
 	_encode_physics_into_state()
+	print(state)
 	_apply_inputs_depending_on_state()
+	print($AnimatedSprite2D.flip_h)
 	
 	move_and_slide()
 
@@ -72,25 +74,35 @@ func _apply_inputs_depending_on_state() -> void:
 
 
 func _apply_inputs_to_resting_state() -> void:
+	_apply_directional_inputs()
+	if jump_inputted:
+		_jump()
+	$AnimatedSprite2D.play("resting")
+
+
+func _apply_directional_inputs() -> void:
 	if input_direction:
 		_move_on_ground()
 	else:
 		velocity.x = move_toward(velocity.x, 0, FRICTION)
-		
-	if jump_inputted:
-		_jump()
 
 
 func _apply_inputs_to_walking_state() -> void:
-	_apply_inputs_to_resting_state()
+	_apply_directional_inputs()
+	if jump_inputted:
+		_jump()
 	$AnimatedSprite2D.play("walking")
-	_flip_animation_based_on_input_direction()
+	if input_direction:
+		_flip_animation_based_on_input_direction()
 
 
 func _apply_inputs_to_dashing_state() -> void:
-	_apply_inputs_to_resting_state()
+	_apply_directional_inputs()
+	if jump_inputted:
+		_jump()
 	$AnimatedSprite2D.play("resting")
-	_flip_animation_based_on_input_direction()
+	if input_direction:
+		_flip_animation_based_on_input_direction()
 
 
 func _apply_inputs_to_jumping_state() -> void:

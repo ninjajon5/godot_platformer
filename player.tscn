@@ -47,7 +47,7 @@ metadata/_edit_group_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=858547388]
 scale = Vector2(5, 5)
 sprite_frames = SubResource("SpriteFrames_onrkg")
-animation = &"jumping"
+animation = &"resting"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=723462392]
 position = Vector2(0, 12.5)
