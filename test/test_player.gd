@@ -109,7 +109,15 @@ func test_jump_input_from_walking_decreases_y_velocity() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.y < 0)
+
+
+func test_jump_input_from_dash_release_decreases_y_velocity() -> void:
+	player.jump_inputted = true
+	player.state = Player.State.DASH_RELEASE
+	player._apply_inputs_depending_on_state()
 	
+	assert_true(player.velocity.y < 0)
+
 
 func test_input_direction_from_resting_increases_x_velocity() -> void:
 	player.state = Player.State.RESTING
@@ -171,6 +179,15 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	
 	# Pivot resets velocity to 0, so there should be no effect from the initial velocity opposing it
 	assert_true(abs(pivot_velocity) == abs(non_pivot_velocity))
+
+
+func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
+	player.state = Player.State.DASH_RELEASE
+	player.velocity.x = 1
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.velocity.x < 1)	# slowed due to friction
 
 
 func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:

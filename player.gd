@@ -63,6 +63,7 @@ func _apply_inputs_depending_on_state() -> void:
 		State.RESTING: _apply_inputs_to_resting_state()
 		State.WALKING: _apply_inputs_to_walking_state()
 		State.DASHING: _apply_inputs_to_dashing_state()
+		State.DASH_RELEASE: _apply_inputs_to_dash_release_state()
 		State.JUMPING: _apply_inputs_to_jumping_state()
 		State.FALLING: _apply_inputs_to_falling_state()
 		State.FAST_FALLING: _apply_inputs_to_fast_falling_state()
@@ -95,10 +96,19 @@ func _apply_inputs_to_dashing_state() -> void:
 		else:
 			_walk()
 	else:
-		state = State.DASH_RELEASE
-		dashing_frame_count = 0
+		_dash_release()
 		_apply_friction()
 		
+	if jump_inputted:
+		_jump()
+
+
+func _apply_inputs_to_dash_release_state() -> void:
+	if input_direction and _input_opposes_direction():
+		_dash()
+	else:
+		_apply_friction()
+	
 	if jump_inputted:
 		_jump()
 
@@ -152,6 +162,11 @@ func _dash() -> void:
 	
 	$AnimatedSprite2D.play("resting")
 	_flip_animation_based_on_input_direction()
+
+
+func _dash_release() -> void:
+	state = State.DASH_RELEASE
+	dashing_frame_count = 0
 
 
 func _jump() -> void:
