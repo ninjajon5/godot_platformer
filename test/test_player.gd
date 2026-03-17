@@ -3,10 +3,11 @@ extends GutTest
 var player: Player
 
 func before_each() -> void:
-	player = Player.new()
-	
+	player = load("res://player.tscn").instantiate()
+	add_child(player)
+
 func after_each() -> void:
-	player.free()
+	player.queue_free()
 	
 
 func test_airborne_with_upwards_velocity_causes_jumping_state() -> void:

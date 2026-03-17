@@ -34,9 +34,7 @@ func _physics_process(_delta: float) -> void:
 	_read_physics()
 	
 	_encode_physics_into_state()
-	print(state)
 	_apply_inputs_depending_on_state()
-	print($AnimatedSprite2D.flip_h)
 	
 	move_and_slide()
 
