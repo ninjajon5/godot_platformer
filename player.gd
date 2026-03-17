@@ -72,8 +72,7 @@ func _apply_inputs_to_resting_state() -> void:
 	if input_direction:
 		_dash()
 	else:
-		dashing_frame_count = 0
-		$AnimatedSprite2D.play("resting")
+		_rest()
 		
 	if jump_inputted:
 		_jump()
@@ -130,20 +129,9 @@ func _apply_friction() -> void:
 	velocity.x = move_toward(velocity.x, 0, FRICTION)
 		
 
-func _jump() -> void:
-	state = State.JUMPING
-	fast_falling = false
-	velocity.y = JUMP_VELOCITY
-	$AnimatedSprite2D.play("jumping")
-
-
-func _dash() -> void:
-	state = State.DASHING
-	velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
-	dashing_frame_count += 1
-	
+func _rest() -> void:
+	dashing_frame_count = 0
 	$AnimatedSprite2D.play("resting")
-	_flip_animation_based_on_input_direction()
 
 
 func _walk() -> void:
@@ -151,6 +139,26 @@ func _walk() -> void:
 	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
+
+
+func _dash() -> void:
+	state = State.DASHING
+	
+	if _input_opposes_direction():
+		velocity.x = 0	# pivot
+	
+	velocity.x = move_toward(velocity.x, input_direction * SPEED * 2, ACCELERATION * 2)
+	dashing_frame_count += 1
+	
+	$AnimatedSprite2D.play("resting")
+	_flip_animation_based_on_input_direction()
+
+
+func _jump() -> void:
+	state = State.JUMPING
+	fast_falling = false
+	velocity.y = JUMP_VELOCITY
+	$AnimatedSprite2D.play("jumping")
 
 
 func _flip_animation_based_on_input_direction() -> void:

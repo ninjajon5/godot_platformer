@@ -160,9 +160,17 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	player.velocity.x = 1
 	player.input_direction = -1
 	player._apply_inputs_depending_on_state()
+	var pivot_velocity: float = player.velocity.x
+
+	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.velocity.x = 0
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	var non_pivot_velocity: float = player.velocity.x
 	
-	# Pivot resets velocity to 0, so the next physics update will not have to decelerate
-	assert_true(player.velocity.x == 0)
+	# Pivot resets velocity to 0, so there should be no effect from the initial velocity opposing it
+	assert_true(abs(pivot_velocity) == abs(non_pivot_velocity))
 
 
 func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:
