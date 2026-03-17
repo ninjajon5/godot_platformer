@@ -5,6 +5,13 @@ var player: Player
 func before_each() -> void:
 	player = load("res://player.tscn").instantiate()
 	add_child(player)
+	player.state = Player.State.RESTING
+	player.jump_inputted = false
+	player.crouch_inputted = false
+	player.left_inputted = false
+	player.right_inputted = false
+	player.input_direction = 0.0
+	
 
 func after_each() -> void:
 	player.queue_free()
