@@ -12,7 +12,7 @@ const DASHING_FRAMES: int = 10
 
 # state tracking
 enum State { RESTING, WALKING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
-var state: State = State.RESTING
+var state: State
 var dashing_frame_count: int = 0
 
 # input attributes
@@ -53,9 +53,11 @@ func _read_inputs() -> void:
 
 func _check_for_physics_transitions() -> void:
 	if not on_floor and velocity.y >= 0 and state != State.FAST_FALLING:
-			state = State.FALLING
+		state = State.FALLING
 	elif on_floor and velocity.x == 0:
-			state = State.RESTING
+		state = State.RESTING
+	elif state in [State.FALLING, State.FAST_FALLING] and on_floor:
+		state = State.WALKING
 
 
 func _apply_inputs_depending_on_state() -> void:
