@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c8nycpqsub84v"]
+
+[ext_resource type="Script" uid="uid://ve6773nlluv1" path="res://debug.gd" id="1_37p78"]
+
+[node name="HUD" type="CanvasLayer" unique_id=67700252]
+
+[node name="debug" type="Label" parent="." unique_id=1264894477]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("1_37p78")
