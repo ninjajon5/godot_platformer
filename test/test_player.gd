@@ -225,6 +225,16 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	assert_true(abs(pivot_velocity) == abs(non_pivot_velocity))
 
 
+func test_reverse_input_direction_while_dashing_resets_dashing_frame_count() -> void:
+	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.velocity.x = 1
+	player.input_direction = -1
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.dashing_frame_count == 1)
+
+
 func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
 	player.state = Player.State.DASH_RELEASE
 	player.velocity.x = 1

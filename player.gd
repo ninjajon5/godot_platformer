@@ -3,8 +3,7 @@ extends CharacterBody2D
 
 # constants
 const SPEED: float = 600.0
-const ACCELERATION: float = 100.0
-const FRICTION: float = 100.0
+const FRICTION: float = 50.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
@@ -148,7 +147,6 @@ func _rest() -> void:
 
 func _walk() -> void:
 	state = State.WALKING
-	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
 
@@ -157,9 +155,9 @@ func _dash() -> void:
 	state = State.DASHING
 	
 	if _input_opposes_direction():
-		velocity.x = 0	# pivot
+		dashing_frame_count = 0
 	
-	velocity.x = move_toward(velocity.x, input_direction * SPEED, ACCELERATION * 2)
+	velocity.x = input_direction * SPEED
 	dashing_frame_count += 1
 	
 	$AnimatedSprite2D.play("resting")
