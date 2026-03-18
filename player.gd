@@ -2,13 +2,13 @@ class_name Player
 extends CharacterBody2D
 
 # constants
-const SPEED: float = 800.0
+const SPEED: float = 600.0
 const ACCELERATION: float = 100.0
 const FRICTION: float = 100.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
-const DASHING_FRAMES: int = 10
+const DASHING_FRAMES: int = 15
 
 # state tracking
 enum State { RESTING, WALKING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
