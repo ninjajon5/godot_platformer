@@ -30,6 +30,7 @@ var left_inputted: bool
 var right_inputted: bool
 var input_axis: float
 var input_direction: float
+var smash_stick_left_frame_count: int = 0
 var smash_stick_right_frame_count: int = 0
 var smashing_stick: bool
 
@@ -95,6 +96,14 @@ func _apply_inputs_to_resting_state() -> void:
 
 
 func _check_for_smash_stick() -> void:
+	if input_direction > 0.0:
+		smash_stick_left_frame_count = 0
+	elif input_direction < 0.0:
+		smash_stick_right_frame_count = 0
+	else:
+		smash_stick_left_frame_count = 0
+		smash_stick_right_frame_count = 0
+	
 	if abs(input_axis) >= 0.95:
 		if smash_stick_right_frame_count <= SMASH_STICK_FRAMES:
 			smashing_stick = true

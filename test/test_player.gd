@@ -281,6 +281,20 @@ func test_smash_stick_input_is_read_correctly() -> void:
 	assert_true(player.smashing_stick)
 
 
+func test_left_inputs_reset_smash_stick_right_frame_count() -> void:
+	player.input_direction = -1.0
+	player.smash_stick_right_frame_count = 1
+	player._check_for_smash_stick()
+	assert_true(player.smash_stick_right_frame_count == 0)
+
+
+func test_right_inputs_reset_smash_stick_left_frame_count() -> void:
+	player.input_direction = 1.0
+	player.smash_stick_left_frame_count = 1
+	player._check_for_smash_stick()
+	assert_true(player.smash_stick_left_frame_count == 0)
+
+
 func test_smash_stick_input_persists_while_input_is_held() -> void:
 	player.input_axis = 1.0
 	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES + 1
