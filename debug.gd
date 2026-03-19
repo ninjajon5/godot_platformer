@@ -17,7 +17,8 @@ func _process(_delta: float) -> void:
 	dashing_frame_count: %s
 	input_axis: %s
 	smashing_stick: %s
-	smash_stick_frame_count: %s
+	smash_stick_left_frame_count: %s
+	smash_stick_right_frame_count: %s
 	input_direction: %s
 	max_input_direction: %s
 	speed: %s" % [
@@ -26,7 +27,8 @@ func _process(_delta: float) -> void:
 		player.input_axis,
 		player.dashing_frame_count,
 		player.smashing_stick,
-		player.smash_stick_frame_count,
+		player.smash_stick_left_frame_count,
+		player.smash_stick_right_frame_count,
 		player.input_direction,
 		max_input_direction,
 		player.velocity.x

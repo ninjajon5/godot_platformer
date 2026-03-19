@@ -311,3 +311,12 @@ func test_smash_stick_release_resets_boolean_tracker() -> void:
 	player._check_for_smash_stick()
 	
 	assert_false(player.smashing_stick)
+
+
+func test_smashing_stick_stops_increments_smash_stick_frame_count() -> void:
+	player.smashing_stick = true
+	player.input_axis = 0.5
+	player.smash_stick_right_frame_count = 100
+	player._check_for_smash_stick()
+	
+	assert_true(player.smash_stick_right_frame_count == 100)
