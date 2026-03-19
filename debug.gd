@@ -15,12 +15,14 @@ func _process(_delta: float) -> void:
 	text = "state: %s
 	recent_states: [ %s, %s, %s ]
 	dashing_frame_count: %s
+	smash_stick_frame_count: %s
 	input_direction: %s
 	max_input_direction: %s
 	speed: %s" % [
 		state,
 		recent_states[0], recent_states[1], recent_states[2],
 		player.dashing_frame_count,
+		player.smash_stick_frame_count,
 		player.input_direction,
 		max_input_direction,
 		player.velocity.x

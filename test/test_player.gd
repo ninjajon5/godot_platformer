@@ -278,7 +278,7 @@ func test_smash_stick_input_is_read_correctly() -> void:
 	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES
 	player._check_for_smash_stick()
 	
-	assert_true(player.smashing_stack)
+	assert_true(player.smashing_stick)
 
 
 func test_smash_stick_input_persists_while_input_is_held() -> void:
@@ -287,7 +287,7 @@ func test_smash_stick_input_persists_while_input_is_held() -> void:
 	player.smashing_stick = true
 	player._check_for_smash_stick()
 	
-	assert_true(player.smashing_stack)
+	assert_true(player.smashing_stick)
 
 
 func test_smash_stick_release_resets_boolean_tracker() -> void:
@@ -296,4 +296,4 @@ func test_smash_stick_release_resets_boolean_tracker() -> void:
 	player.smashing_stick = true
 	player._check_for_smash_stick()
 	
-	assert_false(player.smashing_stack)
+	assert_false(player.smashing_stick)

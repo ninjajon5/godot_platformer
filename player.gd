@@ -8,9 +8,18 @@ const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 15
+const SMASH_STICK_FRAMES: int = 6
 
 # state tracking
-enum State { RESTING, RUNNING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
+enum State { 
+	RESTING, 
+	RUNNING, 
+	DASHING, 
+	DASH_RELEASE, 
+	JUMPING, 
+	FALLING, 
+	FAST_FALLING 
+}
 var state: State
 var dashing_frame_count: int = 0
 
@@ -21,6 +30,8 @@ var left_inputted: bool
 var right_inputted: bool
 var input_axis: float
 var input_direction: float
+var smash_stick_frame_count: int = 0
+var smashing_stick: bool
 
 # physics attributes
 var on_floor: bool
@@ -50,6 +61,7 @@ func _read_inputs() -> void:
 	right_inputted = Input.is_action_just_pressed("right")
 	input_axis = Input.get_axis("left", "right")
 	input_direction = sign(input_axis)
+	_check_for_smash_stick()
 
 
 func _check_for_physics_transitions() -> void:
@@ -80,6 +92,20 @@ func _apply_inputs_to_resting_state() -> void:
 		
 	if jump_inputted:
 		_jump()
+
+
+func _check_for_smash_stick() -> void:
+	if abs(input_axis) == 1.0:
+		if smash_stick_frame_count <= SMASH_STICK_FRAMES:
+			smashing_stick = true
+	else:
+		if smashing_stick:
+			smashing_stick = false			
+		if abs(input_axis) > 0.0:
+			smash_stick_frame_count += 1
+		else:
+			smash_stick_frame_count = 0
+
 
 
 func _apply_inputs_to_running_state() -> void:
