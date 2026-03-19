@@ -8,7 +8,7 @@ const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 15
-const SMASH_STICK_FRAMES: int = 6
+const SMASH_STICK_FRAMES: int = 8
 
 # state tracking
 enum State { 
@@ -95,17 +95,7 @@ func _apply_inputs_to_resting_state() -> void:
 		_jump()
 
 
-func _check_for_smash_stick() -> void:
-	if input_direction > 0.0:
-		smash_stick_left_frame_count = 0
-		smash_stick_right_frame_count += 1
-	elif input_direction < 0.0:
-		smash_stick_left_frame_count += 1
-		smash_stick_right_frame_count = 0
-	else:
-		smash_stick_left_frame_count = 0
-		smash_stick_right_frame_count = 0
-	
+func _check_for_smash_stick() -> void:	
 	if input_axis >= 0.95:
 		if smash_stick_right_frame_count <= SMASH_STICK_FRAMES:
 			smashing_stick = true
@@ -114,6 +104,15 @@ func _check_for_smash_stick() -> void:
 			smashing_stick = true
 	else:
 		smashing_stick = false
+		if input_direction > 0.0:
+			smash_stick_left_frame_count = 0
+			smash_stick_right_frame_count += 1
+		elif input_direction < 0.0:
+			smash_stick_left_frame_count += 1
+			smash_stick_right_frame_count = 0
+		else:
+			smash_stick_left_frame_count = 0
+			smash_stick_right_frame_count = 0
 
 
 
