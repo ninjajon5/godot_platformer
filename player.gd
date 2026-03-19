@@ -20,6 +20,7 @@ var crouch_inputted: bool
 var left_inputted: bool
 var right_inputted: bool
 var input_direction: float
+var absolute_input_direction: float
 
 # physics attributes
 var on_floor: bool
@@ -48,6 +49,7 @@ func _read_inputs() -> void:
 	left_inputted = Input.is_action_just_pressed("left")
 	right_inputted = Input.is_action_just_pressed("right")
 	input_direction = Input.get_axis("left", "right")
+	absolute_input_direction = sign(input_direction)
 
 
 func _check_for_physics_transitions() -> void:
@@ -156,8 +158,9 @@ func _dash() -> void:
 	
 	if _input_opposes_direction():
 		dashing_frame_count = 0
+		_mitigate_snapback()
 	
-	velocity.x = input_direction * SPEED
+	velocity.x = absolute_input_direction * SPEED
 	dashing_frame_count += 1
 	
 	$AnimatedSprite2D.play("resting")
@@ -177,8 +180,13 @@ func _jump() -> void:
 
 
 func _flip_animation_based_on_input_direction() -> void:
-	$AnimatedSprite2D.flip_h = true if input_direction < 0 else false
+	$AnimatedSprite2D.flip_h = true if absolute_input_direction < 0 else false
 
 
 func _input_opposes_direction() -> bool:
 	return sign(input_direction) != sign(velocity.x) and input_direction != 0
+
+
+func _mitigate_snapback() -> void:
+	if abs(input_direction) < 0.5:
+		absolute_input_direction = sign(velocity.x)
