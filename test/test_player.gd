@@ -275,7 +275,7 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 
 func test_smash_stick_input_is_read_correctly() -> void:
 	player.input_axis = 0.96
-	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES
+	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES
 	player._check_for_smash_stick()
 	
 	assert_true(player.smashing_stick)
@@ -283,7 +283,7 @@ func test_smash_stick_input_is_read_correctly() -> void:
 
 func test_smash_stick_input_persists_while_input_is_held() -> void:
 	player.input_axis = 1.0
-	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES + 1
+	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES + 1
 	player.smashing_stick = true
 	player._check_for_smash_stick()
 	
@@ -292,7 +292,7 @@ func test_smash_stick_input_persists_while_input_is_held() -> void:
 
 func test_smash_stick_release_resets_boolean_tracker() -> void:
 	player.input_axis = 0.5
-	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES + 1
+	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES + 1
 	player.smashing_stick = true
 	player._check_for_smash_stick()
 	
