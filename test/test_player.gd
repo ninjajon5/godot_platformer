@@ -98,22 +98,22 @@ func test_grounded_after_fast_falling_with_no_x_velocity_and_no_input_causes_res
 	assert_eq(player.state, Player.State.RESTING)
 
 
-func test_grounded_after_falling_with_x_velocity_causes_walking_state() -> void:
+func test_grounded_after_falling_with_x_velocity_causes_RUNNING_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(10, 0)
 	player.state = Player.State.FALLING
 	player._check_for_physics_transitions()
 	
-	assert_eq(player.state, Player.State.WALKING)
+	assert_eq(player.state, Player.State.RUNNING)
 
 
-func test_grounded_after_fast_falling_with_x_velocity_causes_walking_state() -> void:
+func test_grounded_after_fast_falling_with_x_velocity_causes_RUNNING_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(10, 0)
 	player.state = Player.State.FAST_FALLING
 	player._check_for_physics_transitions()
 	
-	assert_eq(player.state, Player.State.WALKING)
+	assert_eq(player.state, Player.State.RUNNING)
 
 
 func test_grounded_with_no_velocity_or_input_causes_resting_animation() -> void:
@@ -147,9 +147,9 @@ func test_jump_input_from_dashing_decreases_y_velocity() -> void:
 	assert_true(player.velocity.y < 0)
 
 
-func test_jump_input_from_walking_decreases_y_velocity() -> void:
+func test_jump_input_from_RUNNING_decreases_y_velocity() -> void:
 	player.jump_inputted = true
-	player.state = Player.State.WALKING
+	player.state = Player.State.RUNNING
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.y < 0)
@@ -188,13 +188,13 @@ func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state()
 	assert_eq(player.state, Player.State.DASHING)
 
 
-func test_input_direction_while_dashing_above_dash_timer_causes_walking_state() -> void:
+func test_input_direction_while_dashing_above_dash_timer_causes_RUNNING_state() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES + 1
 	player.input_direction = 1
 	player._apply_inputs_depending_on_state()
 	
-	assert_eq(player.state, Player.State.WALKING)
+	assert_eq(player.state, Player.State.RUNNING)
 
 
 func test_releasing_input_direction_while_dashing_causes_dash_release_state() -> void:
@@ -256,7 +256,7 @@ func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_anima
 
 func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
 	player.velocity.x = 100
-	player.state = Player.State.WALKING
+	player.state = Player.State.RUNNING
 	player.input_direction = 0
 	player._apply_inputs_depending_on_state()
 	

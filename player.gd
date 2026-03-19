@@ -10,7 +10,7 @@ const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 15
 
 # state tracking
-enum State { RESTING, WALKING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
+enum State { RESTING, RUNNING, DASHING, DASH_RELEASE, JUMPING, FALLING, FAST_FALLING }
 var state: State
 var dashing_frame_count: int = 0
 
@@ -19,8 +19,8 @@ var jump_inputted: bool
 var crouch_inputted: bool
 var left_inputted: bool
 var right_inputted: bool
+var input_axis: float
 var input_direction: float
-var absolute_input_direction: float
 
 # physics attributes
 var on_floor: bool
@@ -48,8 +48,8 @@ func _read_inputs() -> void:
 	crouch_inputted = Input.is_action_just_pressed("crouch")
 	left_inputted = Input.is_action_just_pressed("left")
 	right_inputted = Input.is_action_just_pressed("right")
-	input_direction = Input.get_axis("left", "right")
-	absolute_input_direction = sign(input_direction)
+	input_axis = Input.get_axis("left", "right")
+	input_direction = sign(input_axis)
 
 
 func _check_for_physics_transitions() -> void:
@@ -58,13 +58,13 @@ func _check_for_physics_transitions() -> void:
 	elif on_floor and velocity.x == 0:
 		state = State.RESTING
 	elif state in [State.FALLING, State.FAST_FALLING] and on_floor:
-		state = State.WALKING
+		state = State.RUNNING
 
 
 func _apply_inputs_depending_on_state() -> void:
 	match state:
 		State.RESTING: _apply_inputs_to_resting_state()
-		State.WALKING: _apply_inputs_to_walking_state()
+		State.RUNNING: _apply_inputs_to_running_state()
 		State.DASHING: _apply_inputs_to_dashing_state()
 		State.DASH_RELEASE: _apply_inputs_to_dash_release_state()
 		State.JUMPING: _apply_inputs_to_jumping_state()
@@ -82,7 +82,7 @@ func _apply_inputs_to_resting_state() -> void:
 		_jump()
 
 
-func _apply_inputs_to_walking_state() -> void:
+func _apply_inputs_to_running_state() -> void:
 	if input_direction:
 		_walk()
 	else:
@@ -148,7 +148,7 @@ func _rest() -> void:
 
 
 func _walk() -> void:
-	state = State.WALKING
+	state = State.RUNNING
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
 
@@ -158,9 +158,8 @@ func _dash() -> void:
 	
 	if _input_opposes_direction():
 		dashing_frame_count = 0
-		_mitigate_snapback()
-	
-	velocity.x = absolute_input_direction * SPEED
+
+	velocity.x = input_direction * SPEED
 	dashing_frame_count += 1
 	
 	$AnimatedSprite2D.play("resting")
@@ -180,13 +179,8 @@ func _jump() -> void:
 
 
 func _flip_animation_based_on_input_direction() -> void:
-	$AnimatedSprite2D.flip_h = true if absolute_input_direction < 0 else false
+	$AnimatedSprite2D.flip_h = true if input_direction < 0 else false
 
 
 func _input_opposes_direction() -> bool:
 	return sign(input_direction) != sign(velocity.x) and input_direction != 0
-
-
-func _mitigate_snapback() -> void:
-	if abs(input_direction) < 0.5:
-		absolute_input_direction = sign(velocity.x)
