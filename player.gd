@@ -95,12 +95,11 @@ func _apply_inputs_to_resting_state() -> void:
 
 
 func _check_for_smash_stick() -> void:
-	if abs(input_axis) == 1.0:
+	if abs(input_axis) >= 0.95:
 		if smash_stick_frame_count <= SMASH_STICK_FRAMES:
 			smashing_stick = true
 	else:
-		if smashing_stick:
-			smashing_stick = false			
+		smashing_stick = false
 		if abs(input_axis) > 0.0:
 			smash_stick_frame_count += 1
 		else:
