@@ -181,7 +181,7 @@ func test_input_direction_from_resting_causes_dashing_state() -> void:
 
 func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
 	player.state = Player.State.DASHING
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.dashing_frame_count = player.DASHING_FRAMES
 	player.input_direction = 1
 	player._apply_inputs_depending_on_state()
 	
@@ -199,7 +199,7 @@ func test_input_direction_while_dashing_above_dash_timer_causes_RUNNING_state() 
 
 func test_releasing_input_direction_while_dashing_causes_dash_release_state() -> void:
 	player.state = Player.State.DASHING
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.dashing_frame_count = player.DASHING_FRAMES
 	player.input_direction = 0
 	player._apply_inputs_depending_on_state()
 	
@@ -208,14 +208,14 @@ func test_releasing_input_direction_while_dashing_causes_dash_release_state() ->
 
 func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	player.state = Player.State.DASHING
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
 	player.input_direction = -1
 	player._apply_inputs_depending_on_state()
 	var pivot_velocity: float = player.velocity.x
 
 	player.state = Player.State.DASHING
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 0
 	player.input_direction = 1
 	player._apply_inputs_depending_on_state()
@@ -227,7 +227,7 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 
 func test_reverse_input_direction_while_dashing_resets_dashing_frame_count() -> void:
 	player.state = Player.State.DASHING
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
 	player.input_direction = -1
 	player._apply_inputs_depending_on_state()
@@ -247,7 +247,7 @@ func test_reapplying_forward_input_direction_during_dash_release_causes_no_veloc
 func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(100, 0)
-	player.dashing_frame_count = player.DASHING_FRAMES - 1
+	player.dashing_frame_count = player.DASHING_FRAMES
 	player._check_for_physics_transitions()
 	
 	# use "resting" animation for dashing
@@ -271,3 +271,29 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 	player._apply_gravity(1)
 	
 	assert_true(player.velocity.y > -100)
+
+
+func test_smash_stick_input_is_read_correctly() -> void:
+	player.input_axis = 1.0
+	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES
+	player._check_for_smash_stick()
+	
+	assert_true(player.smashing_stack)
+
+
+func test_smash_stick_input_persists_while_input_is_held() -> void:
+	player.input_axis = 1.0
+	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES + 1
+	player.smashing_stick = true
+	player._check_for_smash_stick()
+	
+	assert_true(player.smashing_stack)
+
+
+func test_smash_stick_release_resets_boolean_tracker() -> void:
+	player.input_axis = 0.5
+	player.smash_stick_frame_count = player.SMASH_STICK_FRAMES + 1
+	player.smashing_stick = true
+	player._check_for_smash_stick()
+	
+	assert_false(player.smashing_stack)

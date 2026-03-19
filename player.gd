@@ -84,7 +84,7 @@ func _apply_inputs_to_resting_state() -> void:
 
 func _apply_inputs_to_running_state() -> void:
 	if input_direction:
-		_walk()
+		_run()
 	else:
 		_apply_friction()
 		
@@ -94,10 +94,10 @@ func _apply_inputs_to_running_state() -> void:
 
 func _apply_inputs_to_dashing_state() -> void:
 	if input_direction:
-		if dashing_frame_count < DASHING_FRAMES:
+		if dashing_frame_count <= DASHING_FRAMES:
 			_dash()
 		else:
-			_walk()
+			_run()
 	else:
 		_dash_release()
 		_apply_friction()
@@ -147,7 +147,7 @@ func _rest() -> void:
 	$AnimatedSprite2D.play("resting")
 
 
-func _walk() -> void:
+func _run() -> void:
 	state = State.RUNNING
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
