@@ -274,7 +274,7 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 
 
 func test_smash_stick_input_is_read_correctly() -> void:
-	player.input_axis = 0.96
+	player.input_axis = player.SMASH_STICK_AXIS + 0.1
 	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES
 	player._check_for_smash_stick()
 	
@@ -314,8 +314,7 @@ func test_smash_stick_release_resets_boolean_tracker() -> void:
 
 
 func test_smashing_stick_stops_increments_smash_stick_frame_count() -> void:
-	player.smashing_stick = true
-	player.input_axis = 0.5
+	player.input_axis = 1.0
 	player.smash_stick_right_frame_count = 100
 	player._check_for_smash_stick()
 	
