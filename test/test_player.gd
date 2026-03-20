@@ -188,7 +188,7 @@ func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state()
 	assert_eq(player.state, Player.State.DASHING)
 
 
-func test_input_direction_while_dashing_above_dash_timer_causes_RUNNING_state() -> void:
+func test_input_direction_while_dashing_above_dash_timer_causes_running_state() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES + 1
 	player.input_direction = 1
@@ -233,6 +233,17 @@ func test_reverse_input_direction_while_dashing_resets_dashing_frame_count() -> 
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.dashing_frame_count == 1)
+
+
+func test_reverse_input_direction_not_smashing_stick_while_dashing_causes_dash_release() -> void:
+	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES
+	player.velocity.x = 1
+	player.input_direction = -1
+	player.smashing_stick = false
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.state == Player.State.DASH_RELEASE)
 
 
 func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
