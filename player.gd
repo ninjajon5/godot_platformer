@@ -131,7 +131,7 @@ func _apply_inputs_to_running_state() -> void:
 
 
 func _apply_inputs_to_dashing_state() -> void:
-	if input_direction:
+	if input_direction and smashing_stick:
 		if dashing_frame_count <= DASHING_FRAMES:
 			_dash()
 		else:
