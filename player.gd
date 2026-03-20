@@ -145,7 +145,7 @@ func _apply_inputs_to_dashing_state() -> void:
 
 
 func _apply_inputs_to_dash_release_state() -> void:
-	if input_direction and _input_opposes_direction():
+	if input_direction and _input_opposes_direction() and smashing_stick:
 		_dash()
 	else:
 		_apply_friction()
