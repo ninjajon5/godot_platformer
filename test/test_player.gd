@@ -183,6 +183,7 @@ func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state()
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.input_direction = 1
+	player.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.DASHING)
@@ -192,6 +193,7 @@ func test_input_direction_while_dashing_above_dash_timer_causes_running_state() 
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES + 1
 	player.input_direction = 1
+	player.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.RUNNING)
@@ -211,6 +213,7 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
 	player.input_direction = -1
+	player.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	var pivot_velocity: float = player.velocity.x
 
@@ -218,10 +221,13 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 0
 	player.input_direction = 1
+	player.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	var non_pivot_velocity: float = player.velocity.x
 	
 	# Pivot resets velocity to 0, so there should be no effect from the initial velocity opposing it
+	assert_true(sign(pivot_velocity) == -1)
+	assert_true(sign(non_pivot_velocity) == 1)
 	assert_true(abs(pivot_velocity) == abs(non_pivot_velocity))
 
 
@@ -230,6 +236,7 @@ func test_reverse_input_direction_while_dashing_resets_dashing_frame_count() -> 
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
 	player.input_direction = -1
+	player.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.dashing_frame_count == 1)
@@ -237,6 +244,17 @@ func test_reverse_input_direction_while_dashing_resets_dashing_frame_count() -> 
 
 func test_reverse_input_direction_not_smashing_stick_while_dashing_causes_dash_release() -> void:
 	player.state = Player.State.DASHING
+	player.dashing_frame_count = player.DASHING_FRAMES
+	player.velocity.x = 1
+	player.input_direction = -1
+	player.smashing_stick = false
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.state == Player.State.DASH_RELEASE)
+
+
+func test_reverse_input_direction_not_smashing_stick_while_dash_releasing_causes_no_state_change() -> void:
+	player.state = Player.State.DASH_RELEASE
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
 	player.input_direction = -1
