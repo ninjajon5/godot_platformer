@@ -4,6 +4,7 @@ extends CharacterBody2D
 # constants
 const SPEED: float = 600.0
 const FRICTION: float = 50.0
+const ACCELERATION: float = 50.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
@@ -13,7 +14,8 @@ const SMASH_STICK_AXIS: float = 0.95
 
 # state tracking
 enum State { 
-	RESTING, 
+	RESTING,
+	WALKING,
 	RUNNING, 
 	DASHING, 
 	DASH_RELEASE, 
@@ -66,36 +68,6 @@ func _read_inputs() -> void:
 	_check_for_smash_stick()
 
 
-func _check_for_physics_transitions() -> void:
-	if not on_floor and velocity.y >= 0 and state != State.FAST_FALLING:
-		state = State.FALLING
-	elif on_floor and velocity.x == 0:
-		state = State.RESTING
-	elif state in [State.FALLING, State.FAST_FALLING] and on_floor:
-		state = State.RUNNING
-
-
-func _apply_inputs_depending_on_state() -> void:
-	match state:
-		State.RESTING: _apply_inputs_to_resting_state()
-		State.RUNNING: _apply_inputs_to_running_state()
-		State.DASHING: _apply_inputs_to_dashing_state()
-		State.DASH_RELEASE: _apply_inputs_to_dash_release_state()
-		State.JUMPING: _apply_inputs_to_jumping_state()
-		State.FALLING: _apply_inputs_to_falling_state()
-		State.FAST_FALLING: _apply_inputs_to_fast_falling_state()
-
-
-func _apply_inputs_to_resting_state() -> void:
-	if input_direction:
-		_dash()
-	else:
-		_rest()
-		
-	if jump_inputted:
-		_jump()
-
-
 func _check_for_smash_stick() -> void:	
 	if input_axis >= SMASH_STICK_AXIS:
 		if smash_stick_right_frame_count <= SMASH_STICK_FRAMES:
@@ -118,6 +90,45 @@ func _update_smash_stick_frame_counts() -> void:
 	else:
 		smash_stick_left_frame_count = 0
 		smash_stick_right_frame_count = 0
+
+
+func _check_for_physics_transitions() -> void:
+	if not on_floor and velocity.y >= 0 and state != State.FAST_FALLING:
+		state = State.FALLING
+	elif on_floor and velocity.x == 0:
+		state = State.RESTING
+	elif state in [State.FALLING, State.FAST_FALLING] and on_floor:
+		state = State.RUNNING
+
+
+func _apply_inputs_depending_on_state() -> void:
+	match state:
+		State.RESTING: _apply_inputs_to_resting_state()
+		State.WALKING: _apply_inputs_to_walking_state()
+		State.RUNNING: _apply_inputs_to_running_state()
+		State.DASHING: _apply_inputs_to_dashing_state()
+		State.DASH_RELEASE: _apply_inputs_to_dash_release_state()
+		State.JUMPING: _apply_inputs_to_jumping_state()
+		State.FALLING: _apply_inputs_to_falling_state()
+		State.FAST_FALLING: _apply_inputs_to_fast_falling_state()
+
+
+func _apply_inputs_to_resting_state() -> void:
+	if input_direction:
+		if smashing_stick:
+			_dash()
+		else:
+			_walk()
+	else:
+		_rest()
+		
+	if jump_inputted:
+		_jump()
+
+
+func _apply_inputs_to_walking_state() -> void:
+	if smashing_stick:
+		_dash()
 
 
 func _apply_inputs_to_running_state() -> void:
@@ -183,6 +194,13 @@ func _apply_friction() -> void:
 func _rest() -> void:
 	dashing_frame_count = 0
 	$AnimatedSprite2D.play("resting")
+
+
+func _walk() -> void:
+	state = State.WALKING
+	velocity.x = move_toward(velocity.x, SPEED * input_axis, ACCELERATION)
+	$AnimatedSprite2D.play("walking")
+	_flip_animation_based_on_input_direction()
 
 
 func _run() -> void:

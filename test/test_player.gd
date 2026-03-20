@@ -165,6 +165,7 @@ func test_jump_input_from_dash_release_decreases_y_velocity() -> void:
 
 func test_input_direction_from_resting_increases_x_velocity() -> void:
 	player.state = Player.State.RESTING
+	player.input_axis = 1
 	player.input_direction = 1
 	player._apply_inputs_depending_on_state()
 	
