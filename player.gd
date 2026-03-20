@@ -129,6 +129,8 @@ func _apply_inputs_to_resting_state() -> void:
 func _apply_inputs_to_walking_state() -> void:
 	if smashing_stick:
 		_dash()
+	else:
+		_walk()
 
 
 func _apply_inputs_to_running_state() -> void:
