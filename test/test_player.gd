@@ -171,13 +171,23 @@ func test_input_direction_from_resting_increases_x_velocity() -> void:
 	assert_true(player.velocity.x > 0)
 
 
-func test_input_direction_from_resting_causes_dashing_state() -> void:
+func test_input_direction_smashing_stick_from_resting_causes_dashing_state() -> void:
 	player.state = Player.State.RESTING
 	player.input_direction = 1
+	player.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.DASHING)
+
+
+func test_input_direction_not_smashing_stick_from_resting_causes_walking_state() -> void:
+	player.state = Player.State.RESTING
+	player.input_direction = 1
+	player.smashing_stick = false
+	player._apply_inputs_depending_on_state()
 	
+	assert_eq(player.state, Player.State.WALKING)
+
 
 func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
 	player.state = Player.State.DASHING
