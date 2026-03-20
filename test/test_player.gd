@@ -98,7 +98,7 @@ func test_grounded_after_fast_falling_with_no_x_velocity_and_no_input_causes_res
 	assert_eq(player.state, Player.State.RESTING)
 
 
-func test_grounded_after_falling_with_x_velocity_causes_RUNNING_state() -> void:
+func test_grounded_after_falling_with_x_velocity_causes_running_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(10, 0)
 	player.state = Player.State.FALLING
@@ -107,7 +107,7 @@ func test_grounded_after_falling_with_x_velocity_causes_RUNNING_state() -> void:
 	assert_eq(player.state, Player.State.RUNNING)
 
 
-func test_grounded_after_fast_falling_with_x_velocity_causes_RUNNING_state() -> void:
+func test_grounded_after_fast_falling_with_x_velocity_causes_running_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(10, 0)
 	player.state = Player.State.FAST_FALLING
@@ -188,6 +188,26 @@ func test_input_direction_not_smashing_stick_from_resting_causes_walking_state()
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.WALKING)
+
+
+func test_input_direction_smashing_stick_from_walking_causes_dashing_state() -> void:
+	player.state = Player.State.WALKING
+	player.input_direction = 1
+	player.smashing_stick = true
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.state, Player.State.DASHING)
+
+
+func test_input_axis_while_walking_causes_velocity_change() -> void:
+	player.state = Player.State.WALKING
+	player.input_direction = 1
+	player.smashing_stick = false
+	player.input_axis = 0.4
+	player.velocity.x = Player.SPEED
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.velocity.x < Player.SPEED)
 
 
 func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
