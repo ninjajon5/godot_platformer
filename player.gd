@@ -17,7 +17,8 @@ const SMASH_STICK_AXIS: float = 0.75
 enum State { 
 	RESTING,
 	WALKING,
-	RUNNING, 
+	RUNNING,
+	RUN_TURNAROUND,
 	DASHING, 
 	DASH_RELEASE, 
 	JUMPING, 
@@ -107,6 +108,7 @@ func _apply_inputs_depending_on_state() -> void:
 		State.RESTING: _apply_inputs_to_resting_state()
 		State.WALKING: _apply_inputs_to_walking_state()
 		State.RUNNING: _apply_inputs_to_running_state()
+		State.RUN_TURNAROUND: _apply_inputs_to_run_turnaround_state()
 		State.DASHING: _apply_inputs_to_dashing_state()
 		State.DASH_RELEASE: _apply_inputs_to_dash_release_state()
 		State.JUMPING: _apply_inputs_to_jumping_state()
@@ -136,12 +138,19 @@ func _apply_inputs_to_walking_state() -> void:
 
 func _apply_inputs_to_running_state() -> void:
 	if input_direction:
-		_run()
+		if _input_opposes_direction():
+			_run_turnaround()
+		else:
+			_run()
 	else:
 		_apply_friction()
 		
 	if jump_inputted:
 		_jump()
+
+
+func _apply_inputs_to_run_turnaround_state() -> void:
+	_run_turnaround()
 
 
 func _apply_inputs_to_dashing_state() -> void:
@@ -210,6 +219,11 @@ func _run() -> void:
 	state = State.RUNNING
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
+
+
+func _run_turnaround() -> void:
+	state = State.RUN_TURNAROUND
+	_apply_friction()
 
 
 func _dash() -> void:
