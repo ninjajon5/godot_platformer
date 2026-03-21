@@ -190,6 +190,17 @@ func test_input_direction_not_smashing_stick_from_resting_causes_walking_state()
 	assert_eq(player.state, Player.State.WALKING)
 
 
+func test_max_input_axis_not_smashing_stick_while_walking_causes_walking_speed() -> void:
+	player.state = Player.State.WALKING
+	player.velocity.x = player.WALKING_SPEED - (0.5 * player.ACCELERATION)
+	player.input_direction = 1
+	player.input_axis = 1.0
+	player.smashing_stick = false
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.velocity.x == Player.WALKING_SPEED)
+
+
 func test_input_direction_smashing_stick_from_walking_causes_dashing_state() -> void:
 	player.state = Player.State.WALKING
 	player.input_direction = 1
