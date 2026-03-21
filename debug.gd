@@ -3,7 +3,7 @@ extends Label
 @onready var player: CharacterBody2D = $"../../Player"
 var max_input_axis: float = -1.0
 var state: String
-var recent_states: Array[String] = ["-", "-", "-"]
+var recent_states: Array[String] = ["-", "-", "-", "-", "-"]
 
 func _process(_delta: float) -> void:
 	if player.input_axis > max_input_axis:
@@ -13,7 +13,7 @@ func _process(_delta: float) -> void:
 	_update_recent_states(state)
 	
 	text = "state: %s
-	recent_states: [ %s, %s, %s ]
+	recent_states: [ %s, %s, %s, %s, %s ]
 	dashing_frame_count: %s
 	smashing_stick: %s
 	smash_stick_left_frame_count: %s
@@ -23,7 +23,7 @@ func _process(_delta: float) -> void:
 	max_input_direction: %s
 	speed: %s" % [
 		state,
-		recent_states[0], recent_states[1], recent_states[2],
+		recent_states[0], recent_states[1], recent_states[2], recent_states[3], recent_states[4],
 		player.dashing_frame_count,
 		player.smashing_stick,
 		player.smash_stick_left_frame_count,

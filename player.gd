@@ -2,15 +2,15 @@ class_name Player
 extends CharacterBody2D
 
 # constants
-const SPEED: float = 600.0
+const RUNNING_SPEED: float = 600.0
 const FRICTION: float = 50.0
 const ACCELERATION: float = 50.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 15
-const SMASH_STICK_FRAMES: int = 8
-const SMASH_STICK_AXIS: float = 0.95
+const SMASH_STICK_FRAMES: int = 4
+const SMASH_STICK_AXIS: float = 0.75
 
 # state tracking
 enum State { 
@@ -200,7 +200,7 @@ func _rest() -> void:
 
 func _walk() -> void:
 	state = State.WALKING
-	velocity.x = move_toward(velocity.x, SPEED * input_axis, ACCELERATION)
+	velocity.x = move_toward(velocity.x, RUNNING_SPEED * input_axis, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
 
@@ -217,7 +217,7 @@ func _dash() -> void:
 	if _input_opposes_direction():
 		dashing_frame_count = 0
 
-	velocity.x = input_direction * SPEED
+	velocity.x = input_direction * RUNNING_SPEED
 	dashing_frame_count += 1
 	
 	$AnimatedSprite2D.play("resting")

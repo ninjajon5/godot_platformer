@@ -204,10 +204,10 @@ func test_input_axis_while_walking_causes_velocity_change() -> void:
 	player.input_direction = 1
 	player.smashing_stick = false
 	player.input_axis = 0.4
-	player.velocity.x = Player.SPEED
+	player.velocity.x = Player.RUNNING_SPEED
 	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.x < Player.SPEED)
+	assert_true(player.velocity.x < Player.RUNNING_SPEED)
 
 
 func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
@@ -373,7 +373,7 @@ func test_smash_stick_release_resets_boolean_tracker() -> void:
 	assert_false(player.smashing_stick)
 
 
-func test_smashing_stick_stops_increments_smash_stick_frame_count() -> void:
+func test_smashing_stick_stops_incrementing_smash_stick_frame_count() -> void:
 	player.input_axis = 1.0
 	player.smash_stick_right_frame_count = 100
 	player._check_for_smash_stick()
