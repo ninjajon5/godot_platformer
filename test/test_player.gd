@@ -333,6 +333,17 @@ func test_run_turnaround_flips_animation() -> void:
 	assert_true(player.get_node("AnimatedSprite2D").flip_h == false)
 
 
+func test_smashing_stick_into_run_turnaround_resets_smashing_stick() -> void:
+	player.state = Player.State.RUNNING
+	player.velocity.x = player.RUNNING_SPEED
+	player.input_axis = -1.0
+	player.input_direction = -1
+	player.smashing_stick = true
+	player._apply_inputs_depending_on_state()
+	
+	assert_false(player.smashing_stick)
+
+
 func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
 	player.state = Player.State.DASH_RELEASE
 	player.velocity.x = 1

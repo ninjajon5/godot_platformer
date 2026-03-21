@@ -4,7 +4,7 @@ extends CharacterBody2D
 # constants
 const WALKING_SPEED: float = 400.0
 const RUNNING_SPEED: float = 600.0
-const FRICTION: float = 50.0
+const FRICTION: float = 25.0
 const ACCELERATION: float = 50.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
