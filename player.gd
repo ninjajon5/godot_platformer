@@ -224,6 +224,7 @@ func _run() -> void:
 func _run_turnaround() -> void:
 	if state != State.RUN_TURNAROUND:
 		state = State.RUN_TURNAROUND
+		smashing_stick = false
 		_flip_animation_based_on_input_direction()
 	_apply_friction()
 
