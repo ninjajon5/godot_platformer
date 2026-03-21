@@ -2,6 +2,7 @@ class_name Player
 extends CharacterBody2D
 
 # constants
+const WALKING_SPEED: float = 400.0
 const RUNNING_SPEED: float = 600.0
 const FRICTION: float = 50.0
 const ACCELERATION: float = 50.0
@@ -200,7 +201,7 @@ func _rest() -> void:
 
 func _walk() -> void:
 	state = State.WALKING
-	velocity.x = move_toward(velocity.x, RUNNING_SPEED * input_axis, ACCELERATION)
+	velocity.x = move_toward(velocity.x, WALKING_SPEED * input_axis, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
 	_flip_animation_based_on_input_direction()
 
