@@ -318,13 +318,15 @@ func test_reverse_input_direction_while_running_causes_run_turnaround() -> void:
 
 
 func test_run_turnaround_flips_animation() -> void:
-	player.state = Player.State.RUN_TURNAROUND
+	player.state = Player.State.RUNNING
+	player.velocity.x = Player.RUNNING_SPEED
 	player.input_direction = -1
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.get_node("AnimatedSprite2D").flip_h == true)
 	
-	player.state = Player.State.RUN_TURNAROUND
+	player.state = Player.State.RUNNING
+	player.velocity.x = -Player.RUNNING_SPEED
 	player.input_direction = 1
 	player._apply_inputs_depending_on_state()
 	

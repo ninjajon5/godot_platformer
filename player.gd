@@ -222,9 +222,10 @@ func _run() -> void:
 
 
 func _run_turnaround() -> void:
-	state = State.RUN_TURNAROUND
+	if state != State.RUN_TURNAROUND:
+		state = State.RUN_TURNAROUND
+		_flip_animation_based_on_input_direction()
 	_apply_friction()
-	_flip_animation_based_on_input_direction()
 
 
 func _dash() -> void:
