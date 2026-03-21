@@ -11,7 +11,7 @@ func before_each() -> void:
 	player.crouch_inputted = false
 	player.left_inputted = false
 	player.right_inputted = false
-	player.input_direction = 0
+	player.input_direction = 0.0
 	player.input_axis = 0.0
 	
 
@@ -315,6 +315,20 @@ func test_reverse_input_direction_while_running_causes_run_turnaround() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.state == Player.State.RUN_TURNAROUND)
+
+
+func test_run_turnaround_flips_animation() -> void:
+	player.state = Player.State.RUN_TURNAROUND
+	player.input_direction = -1
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.get_node("AnimatedSprite2D").flip_h == true)
+	
+	player.state = Player.State.RUN_TURNAROUND
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.get_node("AnimatedSprite2D").flip_h == false)
 
 
 func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:

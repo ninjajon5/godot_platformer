@@ -224,6 +224,7 @@ func _run() -> void:
 func _run_turnaround() -> void:
 	state = State.RUN_TURNAROUND
 	_apply_friction()
+	_flip_animation_based_on_input_direction()
 
 
 func _dash() -> void:
