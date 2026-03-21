@@ -11,7 +11,8 @@ func before_each() -> void:
 	player.crouch_inputted = false
 	player.left_inputted = false
 	player.right_inputted = false
-	player.input_direction = 0.0
+	player.input_direction = 0
+	player.input_axis = 0.0
 	
 
 func after_each() -> void:
@@ -304,6 +305,16 @@ func test_reverse_input_direction_not_smashing_stick_while_dash_releasing_causes
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.state == Player.State.DASH_RELEASE)
+
+
+func test_reverse_input_direction_while_running_causes_run_turnaround() -> void:
+	player.state = Player.State.RUNNING
+	player.velocity.x = player.RUNNING_SPEED
+	player.input_axis = -1.0
+	player.input_direction = -1
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.state == Player.State.RUN_TURNAROUND)
 
 
 func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
