@@ -10,8 +10,9 @@ const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 2
 const DASHING_FRAMES: int = 15
-const SMASH_STICK_FRAMES: int = 4
-const SMASH_STICK_AXIS: float = 0.75
+
+# inputs
+var inputs: InputReader = InputReader.new()
 
 # state tracking
 enum State { 
@@ -29,17 +30,6 @@ const GROUNDED_INACTIONABLE_STATES: Array[State] = [State.RUN_TURNAROUND]
 var state: State
 var dashing_frame_count: int = 0
 
-# input attributes
-var jump_inputted: bool
-var crouch_inputted: bool
-var left_inputted: bool
-var right_inputted: bool
-var input_axis: float
-var input_direction: float
-var smash_stick_left_frame_count: int = 0
-var smash_stick_right_frame_count: int = 0
-var smashing_stick: bool
-
 # physics attributes
 var on_floor: bool
 var fast_falling: bool = false
@@ -47,7 +37,7 @@ var gravity_vector: Vector2
 
 
 func _physics_process(_delta: float) -> void:
-	_read_inputs()
+	inputs.read_inputs()
 	_read_physics()
 	
 	_check_for_physics_transitions()
@@ -59,40 +49,6 @@ func _physics_process(_delta: float) -> void:
 func _read_physics() -> void:
 	on_floor = is_on_floor()
 	gravity_vector = Vector2(0, GRAVITY)
-
-
-func _read_inputs() -> void:
-	jump_inputted = Input.is_action_just_pressed("jump")
-	crouch_inputted = Input.is_action_just_pressed("crouch")
-	left_inputted = Input.is_action_just_pressed("left")
-	right_inputted = Input.is_action_just_pressed("right")
-	input_axis = Input.get_axis("left", "right")
-	input_direction = sign(input_axis)
-	_check_for_smash_stick()
-
-
-func _check_for_smash_stick() -> void:	
-	if input_axis >= SMASH_STICK_AXIS:
-		if smash_stick_right_frame_count <= SMASH_STICK_FRAMES:
-			smashing_stick = true
-	elif input_axis <= -SMASH_STICK_AXIS:
-		if smash_stick_left_frame_count <= SMASH_STICK_FRAMES:
-			smashing_stick = true
-	else:
-		smashing_stick = false
-		_update_smash_stick_frame_counts()
-
-
-func _update_smash_stick_frame_counts() -> void:
-	if input_direction > 0.0:
-		smash_stick_left_frame_count = 0
-		smash_stick_right_frame_count += 1
-	elif input_direction < 0.0:
-		smash_stick_left_frame_count += 1
-		smash_stick_right_frame_count = 0
-	else:
-		smash_stick_left_frame_count = 0
-		smash_stick_right_frame_count = 0
 
 
 func _check_for_physics_transitions() -> void:
@@ -119,40 +75,32 @@ func _apply_inputs_depending_on_state() -> void:
 
 
 func _reset_inputs_if_inactionable() -> void:
-	if state in GROUNDED_INACTIONABLE_STATES and smashing_stick:
-		_reset_smashing_stick()
-
-
-func _reset_smashing_stick() -> void:
-	smashing_stick = false
-	if input_direction == -1:
-		smash_stick_left_frame_count = SMASH_STICK_FRAMES + 1
-	elif input_direction == 1:
-		smash_stick_right_frame_count = SMASH_STICK_FRAMES + 1
+	if state in GROUNDED_INACTIONABLE_STATES and inputs.smashing_stick:
+		inputs.reset_smashing_stick()
 
 
 func _apply_inputs_to_resting_state() -> void:
-	if input_direction:
-		if smashing_stick:
+	if inputs.direction:
+		if inputs.smashing_stick:
 			_dash()
 		else:
 			_walk()
 	else:
 		_rest()
 		
-	if jump_inputted:
+	if inputs.jump:
 		_jump()
 
 
 func _apply_inputs_to_walking_state() -> void:
-	if smashing_stick:
+	if inputs.smashing_stick:
 		_dash()
 	else:
 		_walk()
 
 
 func _apply_inputs_to_running_state() -> void:
-	if input_direction:
+	if inputs.direction:
 		if _input_opposes_direction():
 			_run_turnaround()
 		else:
@@ -160,18 +108,18 @@ func _apply_inputs_to_running_state() -> void:
 	else:
 		_apply_friction()
 		
-	if jump_inputted:
+	if inputs.jump:
 		_jump()
 
 
 func _apply_inputs_to_run_turnaround_state() -> void:
 	_run_turnaround()
-	if jump_inputted:
+	if inputs.jump:
 		_jump()
 
 
 func _apply_inputs_to_dashing_state() -> void:
-	if input_direction and smashing_stick:
+	if inputs.direction and inputs.smashing_stick:
 		if dashing_frame_count <= DASHING_FRAMES:
 			_dash()
 		else:
@@ -180,17 +128,17 @@ func _apply_inputs_to_dashing_state() -> void:
 		_dash_release()
 		_apply_friction()
 		
-	if jump_inputted:
+	if inputs.jump:
 		_jump()
 
 
 func _apply_inputs_to_dash_release_state() -> void:
-	if input_direction and _input_opposes_direction() and smashing_stick:
+	if inputs.direction and _input_opposes_direction() and inputs.smashing_stick:
 		_dash()
 	else:
 		_apply_friction()
 	
-	if jump_inputted:
+	if inputs.jump:
 		_jump()
 
 
@@ -199,7 +147,7 @@ func _apply_inputs_to_jumping_state() -> void:
 
 
 func _apply_inputs_to_falling_state() -> void:
-	if crouch_inputted:
+	if inputs.crouch:
 		state = State.FAST_FALLING
 		_apply_gravity(FAST_FALLING_MULTIPLIER)
 	else:
@@ -227,22 +175,22 @@ func _rest() -> void:
 
 func _walk() -> void:
 	state = State.WALKING
-	velocity.x = move_toward(velocity.x, WALKING_SPEED * input_axis, ACCELERATION)
+	velocity.x = move_toward(velocity.x, WALKING_SPEED * inputs.axis, ACCELERATION)
 	$AnimatedSprite2D.play("walking")
-	_flip_animation_based_on_input_direction()
+	_flip_animation_based_on_direction()
 
 
 func _run() -> void:
 	state = State.RUNNING
 	$AnimatedSprite2D.play("walking")
-	_flip_animation_based_on_input_direction()
+	_flip_animation_based_on_direction()
 
 
 func _run_turnaround() -> void:
 	if state != State.RUN_TURNAROUND:
 		state = State.RUN_TURNAROUND
-		smashing_stick = false
-		_flip_animation_based_on_input_direction()
+		inputs.smashing_stick = false
+		_flip_animation_based_on_direction()
 	_apply_friction()
 
 
@@ -252,11 +200,11 @@ func _dash() -> void:
 	if _input_opposes_direction():
 		dashing_frame_count = 0
 
-	velocity.x = input_direction * RUNNING_SPEED
+	velocity.x = inputs.direction * RUNNING_SPEED
 	dashing_frame_count += 1
 	
 	$AnimatedSprite2D.play("resting")
-	_flip_animation_based_on_input_direction()
+	_flip_animation_based_on_direction()
 
 
 func _dash_release() -> void:
@@ -271,9 +219,9 @@ func _jump() -> void:
 	$AnimatedSprite2D.play("jumping")
 
 
-func _flip_animation_based_on_input_direction() -> void:
-	$AnimatedSprite2D.flip_h = true if input_direction < 0 else false
+func _flip_animation_based_on_direction() -> void:
+	$AnimatedSprite2D.flip_h = true if inputs.direction < 0 else false
 
 
 func _input_opposes_direction() -> bool:
-	return sign(input_direction) != sign(velocity.x) and input_direction != 0
+	return sign(inputs.direction) != sign(velocity.x) and inputs.direction != 0

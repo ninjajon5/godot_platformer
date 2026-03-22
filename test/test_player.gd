@@ -7,12 +7,6 @@ func before_each() -> void:
 	player = load("res://player.tscn").instantiate()
 	add_child(player)
 	player.state = Player.State.RESTING
-	player.jump_inputted = false
-	player.crouch_inputted = false
-	player.left_inputted = false
-	player.right_inputted = false
-	player.input_direction = 0.0
-	player.input_axis = 0.0
 	
 
 func after_each() -> void:
@@ -28,9 +22,9 @@ func after_each() -> void:
 # =================================
 
 
-func test_resting_with_jump_inputted_causes_jumping_state() -> void:
+func test_resting_with_jump_causes_jumping_state() -> void:
 	player.state = Player.State.RESTING
-	player.jump_inputted = true
+	player.inputs.jump = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.JUMPING)
@@ -56,7 +50,7 @@ func test_falling_with_crouch_input_leads_to_fast_falling_state() -> void:
 	player.on_floor = false
 	player.velocity = Vector2(0, 100)
 	player.state = Player.State.FALLING
-	player.crouch_inputted = true
+	player.inputs.crouch = true
 	player._check_for_physics_transitions()
 	player._apply_inputs_depending_on_state()
 	
@@ -66,7 +60,7 @@ func test_falling_with_crouch_input_leads_to_fast_falling_state() -> void:
 func test_falling_causes_jumping_animation() -> void:
 	player.on_floor = false
 	player.state = Player.State.FALLING
-	player.crouch_inputted = false
+	player.inputs.crouch = false
 	player._check_for_physics_transitions()
 	player._apply_inputs_depending_on_state()
 	
@@ -133,7 +127,7 @@ func test_jump_from_resting_decreases_y_velocity() -> void:
 
 
 func test_jump_input_from_resting_decreases_y_velocity() -> void:
-	player.jump_inputted = true
+	player.inputs.jump = true
 	player.state = Player.State.RESTING
 	player._apply_inputs_depending_on_state()
 	
@@ -141,7 +135,7 @@ func test_jump_input_from_resting_decreases_y_velocity() -> void:
 
 
 func test_jump_input_from_dashing_decreases_y_velocity() -> void:
-	player.jump_inputted = true
+	player.inputs.jump = true
 	player.state = Player.State.DASHING
 	player._apply_inputs_depending_on_state()
 	
@@ -149,7 +143,7 @@ func test_jump_input_from_dashing_decreases_y_velocity() -> void:
 
 
 func test_jump_input_from_running_decreases_y_velocity() -> void:
-	player.jump_inputted = true
+	player.inputs.jump = true
 	player.state = Player.State.RUNNING
 	player._apply_inputs_depending_on_state()
 	
@@ -157,114 +151,114 @@ func test_jump_input_from_running_decreases_y_velocity() -> void:
 
 
 func test_jump_input_from_dash_release_decreases_y_velocity() -> void:
-	player.jump_inputted = true
+	player.inputs.jump = true
 	player.state = Player.State.DASH_RELEASE
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.y < 0)
 
 
-func test_input_direction_from_resting_increases_x_velocity() -> void:
+func test_direction_from_resting_increases_x_velocity() -> void:
 	player.state = Player.State.RESTING
-	player.input_axis = 1
-	player.input_direction = 1
+	player.inputs.axis = 1
+	player.inputs.direction = 1
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x > 0)
 
 
-func test_input_direction_smashing_stick_from_resting_causes_dashing_state() -> void:
+func test_direction_smashing_stick_from_resting_causes_dashing_state() -> void:
 	player.state = Player.State.RESTING
-	player.input_direction = 1
-	player.smashing_stick = true
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.DASHING)
 
 
-func test_input_direction_not_smashing_stick_from_resting_causes_walking_state() -> void:
+func test_direction_not_smashing_stick_from_resting_causes_walking_state() -> void:
 	player.state = Player.State.RESTING
-	player.input_direction = 1
-	player.smashing_stick = false
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = false
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.WALKING)
 
 
-func test_max_input_axis_not_smashing_stick_while_walking_causes_walking_speed() -> void:
+func test_max_axis_not_smashing_stick_while_walking_causes_walking_speed() -> void:
 	player.state = Player.State.WALKING
 	player.velocity.x = player.WALKING_SPEED - (0.5 * player.ACCELERATION)
-	player.input_direction = 1
-	player.input_axis = 1.0
-	player.smashing_stick = false
+	player.inputs.direction = 1
+	player.inputs.axis = 1.0
+	player.inputs.smashing_stick = false
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x == Player.WALKING_SPEED)
 
 
-func test_input_direction_smashing_stick_from_walking_causes_dashing_state() -> void:
+func test_direction_smashing_stick_from_walking_causes_dashing_state() -> void:
 	player.state = Player.State.WALKING
-	player.input_direction = 1
-	player.smashing_stick = true
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.DASHING)
 
 
-func test_input_axis_while_walking_causes_velocity_change() -> void:
+func test_axis_while_walking_causes_velocity_change() -> void:
 	player.state = Player.State.WALKING
-	player.input_direction = 1
-	player.smashing_stick = false
-	player.input_axis = 0.4
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = false
+	player.inputs.axis = 0.4
 	player.velocity.x = Player.RUNNING_SPEED
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x < Player.RUNNING_SPEED)
 
 
-func test_input_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
+func test_direction_while_dashing_within_dash_timer_causes_dashing_state() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
-	player.input_direction = 1
-	player.smashing_stick = true
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.DASHING)
 
 
-func test_input_direction_while_dashing_above_dash_timer_causes_running_state() -> void:
+func test_direction_while_dashing_above_dash_timer_causes_running_state() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES + 1
-	player.input_direction = 1
-	player.smashing_stick = true
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.RUNNING)
 
 
-func test_releasing_input_direction_while_dashing_causes_dash_release_state() -> void:
+func test_releasing_direction_while_dashing_causes_dash_release_state() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
-	player.input_direction = 0
+	player.inputs.direction = 0
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.state, Player.State.DASH_RELEASE)
 
 
-func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
+func test_reverse_direction_while_dashing_causes_pivot() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
-	player.input_direction = -1
-	player.smashing_stick = true
+	player.inputs.direction = -1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	var pivot_velocity: float = player.velocity.x
 
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 0
-	player.input_direction = 1
-	player.smashing_stick = true
+	player.inputs.direction = 1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	var non_pivot_velocity: float = player.velocity.x
 	
@@ -274,44 +268,44 @@ func test_reverse_input_direction_while_dashing_causes_pivot() -> void:
 	assert_true(abs(pivot_velocity) == abs(non_pivot_velocity))
 
 
-func test_reverse_input_direction_while_dashing_resets_dashing_frame_count() -> void:
+func test_reverse_direction_while_dashing_resets_dashing_frame_count() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
-	player.input_direction = -1
-	player.smashing_stick = true
+	player.inputs.direction = -1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.dashing_frame_count == 1)
 
 
-func test_reverse_input_direction_not_smashing_stick_while_dashing_causes_dash_release() -> void:
+func test_reverse_direction_not_smashing_stick_while_dashing_causes_dash_release() -> void:
 	player.state = Player.State.DASHING
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
-	player.input_direction = -1
-	player.smashing_stick = false
+	player.inputs.direction = -1
+	player.inputs.smashing_stick = false
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.state == Player.State.DASH_RELEASE)
 
 
-func test_reverse_input_direction_not_smashing_stick_while_dash_releasing_causes_no_state_change() -> void:
+func test_reverse_direction_not_smashing_stick_while_dash_releasing_causes_no_state_change() -> void:
 	player.state = Player.State.DASH_RELEASE
 	player.dashing_frame_count = player.DASHING_FRAMES
 	player.velocity.x = 1
-	player.input_direction = -1
-	player.smashing_stick = false
+	player.inputs.direction = -1
+	player.inputs.smashing_stick = false
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.state == Player.State.DASH_RELEASE)
 
 
-func test_reverse_input_direction_while_running_causes_run_turnaround() -> void:
+func test_reverse_direction_while_running_causes_run_turnaround() -> void:
 	player.state = Player.State.RUNNING
 	player.velocity.x = player.RUNNING_SPEED
-	player.input_axis = -1.0
-	player.input_direction = -1
+	player.inputs.axis = -1.0
+	player.inputs.direction = -1
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.state == Player.State.RUN_TURNAROUND)
@@ -320,14 +314,14 @@ func test_reverse_input_direction_while_running_causes_run_turnaround() -> void:
 func test_run_turnaround_flips_animation() -> void:
 	player.state = Player.State.RUNNING
 	player.velocity.x = Player.RUNNING_SPEED
-	player.input_direction = -1
+	player.inputs.direction = -1
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.get_node("AnimatedSprite2D").flip_h == true)
 	
 	player.state = Player.State.RUNNING
 	player.velocity.x = -Player.RUNNING_SPEED
-	player.input_direction = 1
+	player.inputs.direction = 1
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.get_node("AnimatedSprite2D").flip_h == false)
@@ -336,36 +330,36 @@ func test_run_turnaround_flips_animation() -> void:
 func test_smashing_stick_into_run_turnaround_resets_smashing_stick() -> void:
 	player.state = Player.State.RUNNING
 	player.velocity.x = player.RUNNING_SPEED
-	player.input_axis = -1.0
-	player.input_direction = -1
-	player.smashing_stick = true
+	player.inputs.axis = -1.0
+	player.inputs.direction = -1
+	player.inputs.smashing_stick = true
 	player._apply_inputs_depending_on_state()
 	
-	assert_false(player.smashing_stick)
+	assert_false(player.inputs.smashing_stick)
 
 
 func test_run_turnaround_prevents_smashing_stick() -> void:
 	player.state = Player.State.RUN_TURNAROUND
-	player.smashing_stick = true
-	player.input_direction = 1
+	player.inputs.smashing_stick = true
+	player.inputs.direction = 1
 	player._apply_inputs_depending_on_state()
 	
-	assert_false(player.smashing_stick)
-	assert_true(player.smash_stick_right_frame_count > player.SMASH_STICK_FRAMES)
+	assert_false(player.inputs.smashing_stick)
+	assert_true(player.inputs.smash_stick_right_frame_count > player.inputs.SMASH_STICK_FRAMES)
 
 
 func test_jump_while_run_turnaround_increases_y_velocity() -> void:
 	player.state = Player.State.RUN_TURNAROUND
-	player.jump_inputted = true
+	player.inputs.jump = true
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.y < 0)
 
 
-func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
+func test_reapplying_forward_direction_during_dash_release_causes_no_velocity_increase() -> void:
 	player.state = Player.State.DASH_RELEASE
 	player.velocity.x = 1
-	player.input_direction = 1
+	player.inputs.direction = 1
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x < 1)	# slowed due to friction
@@ -384,7 +378,7 @@ func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_anima
 func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
 	player.velocity.x = 100
 	player.state = Player.State.RUNNING
-	player.input_direction = 0
+	player.inputs.direction = 0
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x < 100)
@@ -401,48 +395,48 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 
 
 func test_smash_stick_input_is_read_correctly() -> void:
-	player.input_axis = player.SMASH_STICK_AXIS + 0.1
-	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES
-	player._check_for_smash_stick()
+	player.inputs.axis = player.inputs.SMASH_STICK_AXIS + 0.1
+	player.inputs.smash_stick_right_frame_count = player.inputs.SMASH_STICK_FRAMES
+	player.inputs._check_for_smash_stick()
 	
-	assert_true(player.smashing_stick)
+	assert_true(player.inputs.smashing_stick)
 
 
 func test_left_inputs_reset_smash_stick_right_frame_count() -> void:
-	player.input_direction = -1.0
-	player.smash_stick_right_frame_count = 1
-	player._check_for_smash_stick()
-	assert_true(player.smash_stick_right_frame_count == 0)
+	player.inputs.direction = -1.0
+	player.inputs.smash_stick_right_frame_count = 1
+	player.inputs._check_for_smash_stick()
+	assert_true(player.inputs.smash_stick_right_frame_count == 0)
 
 
 func test_right_inputs_reset_smash_stick_left_frame_count() -> void:
-	player.input_direction = 1.0
-	player.smash_stick_left_frame_count = 1
-	player._check_for_smash_stick()
-	assert_true(player.smash_stick_left_frame_count == 0)
+	player.inputs.direction = 1.0
+	player.inputs.smash_stick_left_frame_count = 1
+	player.inputs._check_for_smash_stick()
+	assert_true(player.inputs.smash_stick_left_frame_count == 0)
 
 
 func test_smash_stick_input_persists_while_input_is_held() -> void:
-	player.input_axis = 1.0
-	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES + 1
-	player.smashing_stick = true
-	player._check_for_smash_stick()
+	player.inputs.axis = 1.0
+	player.inputs.smash_stick_right_frame_count = player.inputs.SMASH_STICK_FRAMES + 1
+	player.inputs.smashing_stick = true
+	player.inputs._check_for_smash_stick()
 	
-	assert_true(player.smashing_stick)
+	assert_true(player.inputs.smashing_stick)
 
 
 func test_smash_stick_release_resets_boolean_tracker() -> void:
-	player.input_axis = 0.5
-	player.smash_stick_right_frame_count = player.SMASH_STICK_FRAMES + 1
-	player.smashing_stick = true
-	player._check_for_smash_stick()
+	player.inputs.axis = 0.5
+	player.inputs.smash_stick_right_frame_count = player.inputs.SMASH_STICK_FRAMES + 1
+	player.inputs.smashing_stick = true
+	player.inputs._check_for_smash_stick()
 	
-	assert_false(player.smashing_stick)
+	assert_false(player.inputs.smashing_stick)
 
 
 func test_smashing_stick_stops_incrementing_smash_stick_frame_count() -> void:
-	player.input_axis = 1.0
-	player.smash_stick_right_frame_count = 100
-	player._check_for_smash_stick()
+	player.inputs.axis = 1.0
+	player.inputs.smash_stick_right_frame_count = 100
+	player.inputs._check_for_smash_stick()
 	
-	assert_true(player.smash_stick_right_frame_count == 100)
+	assert_true(player.inputs.smash_stick_right_frame_count == 100)
