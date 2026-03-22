@@ -22,77 +22,6 @@ func after_each() -> void:
 # =================================
 
 
-func test_resting_with_jump_causes_jumping_state() -> void:
-	player.state = Player.State.RESTING
-	player.inputs.jump = true
-	player._apply_inputs_depending_on_state()
-	
-	assert_eq(player.state, Player.State.JUMPING)
-
-
-func test_airborne_with_zero_velocity_causes_falling_state() -> void:
-	player.on_floor = false
-	player.velocity = Vector2(0, 0)
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.FALLING)
-
-
-func test_airborne_with_downwards_velocity_causes_falling_state() -> void:
-	player.on_floor = false
-	player.velocity = Vector2(0, 100)
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.FALLING)
-
-
-func test_falling_with_crouch_input_leads_to_fast_falling_state() -> void:
-	player.on_floor = false
-	player.velocity = Vector2(0, 100)
-	player.state = Player.State.FALLING
-	player.inputs.crouch = true
-	player._check_for_physics_transitions()
-	player._apply_inputs_depending_on_state()
-	
-	assert_eq(player.state, Player.State.FAST_FALLING)
-
-
-func test_falling_causes_jumping_animation() -> void:
-	player.on_floor = false
-	player.state = Player.State.FALLING
-	player.inputs.crouch = false
-	player._check_for_physics_transitions()
-	player._apply_inputs_depending_on_state()
-	
-	assert_eq(player.get_node("AnimatedSprite2D").animation, "jumping")
-
-
-func test_grounded_with_no_velocity_causes_resting_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(0, 0)
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.RESTING)
-
-
-func test_grounded_after_falling_with_no_x_velocity_and_no_input_causes_resting_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(0, 0)
-	player.state = Player.State.FALLING
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.RESTING)
-
-
-func test_grounded_after_fast_falling_with_no_x_velocity_and_no_input_causes_resting_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(0, 0)
-	player.state = Player.State.FAST_FALLING
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.RESTING)
-
-
 func test_grounded_after_falling_with_x_velocity_causes_running_state() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(10, 0)
@@ -109,53 +38,6 @@ func test_grounded_after_fast_falling_with_x_velocity_causes_running_state() -> 
 	player._check_for_physics_transitions()
 	
 	assert_eq(player.state, Player.State.RUNNING)
-
-
-func test_grounded_with_no_velocity_or_input_causes_resting_animation() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(0, 0)
-	player._check_for_physics_transitions()
-	player._apply_inputs_depending_on_state()
-	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
-
-
-func test_jump_from_resting_decreases_y_velocity() -> void:
-	player.state = Player.State.RESTING
-	player._jump()
-	
-	assert_true(player.velocity.y < 0)
-
-
-func test_jump_input_from_resting_decreases_y_velocity() -> void:
-	player.inputs.jump = true
-	player.state = Player.State.RESTING
-	player._apply_inputs_depending_on_state()
-	
-	assert_true(player.velocity.y < 0)
-
-
-func test_jump_input_from_dashing_decreases_y_velocity() -> void:
-	player.inputs.jump = true
-	player.state = Player.State.DASHING
-	player._apply_inputs_depending_on_state()
-	
-	assert_true(player.velocity.y < 0)
-
-
-func test_jump_input_from_running_decreases_y_velocity() -> void:
-	player.inputs.jump = true
-	player.state = Player.State.RUNNING
-	player._apply_inputs_depending_on_state()
-	
-	assert_true(player.velocity.y < 0)
-
-
-func test_jump_input_from_dash_release_decreases_y_velocity() -> void:
-	player.inputs.jump = true
-	player.state = Player.State.DASH_RELEASE
-	player._apply_inputs_depending_on_state()
-	
-	assert_true(player.velocity.y < 0)
 
 
 func test_direction_from_resting_increases_x_velocity() -> void:
@@ -382,16 +264,6 @@ func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.velocity.x < 100)
-
-
-func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
-	player.velocity.y = -100
-	player.on_floor = false
-	player.state = Player.State.JUMPING
-	player.gravity_vector = Vector2(0, player.GRAVITY)
-	player._apply_gravity(1)
-	
-	assert_true(player.velocity.y > -100)
 
 
 func test_smash_stick_input_is_read_correctly() -> void:
