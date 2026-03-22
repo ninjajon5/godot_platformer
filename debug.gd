@@ -6,8 +6,8 @@ var state: String
 var recent_states: Array[String] = ["-", "-", "-", "-", "-"]
 
 func _process(_delta: float) -> void:
-	if player.input_axis > max_input_axis:
-		max_input_axis = player.input_axis
+	if player.inputs.axis > max_input_axis:
+		max_input_axis = player.inputs.axis
 		
 	state = Player.State.keys()[player.state]
 	_update_recent_states(state)
@@ -25,11 +25,11 @@ func _process(_delta: float) -> void:
 		state,
 		recent_states[0], recent_states[1], recent_states[2], recent_states[3], recent_states[4],
 		player.dashing_frame_count,
-		player.smashing_stick,
-		player.smash_stick_left_frame_count,
-		player.smash_stick_right_frame_count,
-		player.input_axis,
-		player.input_direction,
+		player.inputs.smashing_stick,
+		player.inputs.smash_stick_left_frame_count,
+		player.inputs.smash_stick_right_frame_count,
+		player.inputs.axis,
+		player.inputs.direction,
 		max_input_axis,
 		player.velocity.x
 	]
