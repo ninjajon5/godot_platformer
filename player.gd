@@ -166,6 +166,8 @@ func _apply_inputs_to_running_state() -> void:
 
 func _apply_inputs_to_run_turnaround_state() -> void:
 	_run_turnaround()
+	if jump_inputted:
+		_jump()
 
 
 func _apply_inputs_to_dashing_state() -> void:
