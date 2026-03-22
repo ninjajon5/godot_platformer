@@ -25,6 +25,7 @@ enum State {
 	FALLING, 
 	FAST_FALLING 
 }
+const GROUNDED_INACTIONABLE_STATES: Array[State] = [State.RUN_TURNAROUND]
 var state: State
 var dashing_frame_count: int = 0
 
@@ -104,6 +105,7 @@ func _check_for_physics_transitions() -> void:
 
 
 func _apply_inputs_depending_on_state() -> void:
+	_reset_inputs_if_inactionable()
 	match state:
 		State.RESTING: _apply_inputs_to_resting_state()
 		State.WALKING: _apply_inputs_to_walking_state()
@@ -114,6 +116,19 @@ func _apply_inputs_depending_on_state() -> void:
 		State.JUMPING: _apply_inputs_to_jumping_state()
 		State.FALLING: _apply_inputs_to_falling_state()
 		State.FAST_FALLING: _apply_inputs_to_fast_falling_state()
+
+
+func _reset_inputs_if_inactionable() -> void:
+	if state in GROUNDED_INACTIONABLE_STATES and smashing_stick:
+		_reset_smashing_stick()
+
+
+func _reset_smashing_stick() -> void:
+	smashing_stick = false
+	if input_direction == -1:
+		smash_stick_left_frame_count = SMASH_STICK_FRAMES + 1
+	elif input_direction == 1:
+		smash_stick_right_frame_count = SMASH_STICK_FRAMES + 1
 
 
 func _apply_inputs_to_resting_state() -> void:

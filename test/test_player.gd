@@ -148,7 +148,7 @@ func test_jump_input_from_dashing_decreases_y_velocity() -> void:
 	assert_true(player.velocity.y < 0)
 
 
-func test_jump_input_from_RUNNING_decreases_y_velocity() -> void:
+func test_jump_input_from_running_decreases_y_velocity() -> void:
 	player.jump_inputted = true
 	player.state = Player.State.RUNNING
 	player._apply_inputs_depending_on_state()
@@ -342,6 +342,16 @@ func test_smashing_stick_into_run_turnaround_resets_smashing_stick() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_false(player.smashing_stick)
+
+
+func test_run_turnaround_prevents_smashing_stick() -> void:
+	player.state = Player.State.RUN_TURNAROUND
+	player.smashing_stick = true
+	player.input_direction = 1
+	player._apply_inputs_depending_on_state()
+	
+	assert_false(player.smashing_stick)
+	assert_true(player.smash_stick_right_frame_count > player.SMASH_STICK_FRAMES)
 
 
 func test_reapplying_forward_input_direction_during_dash_release_causes_no_velocity_increase() -> void:
