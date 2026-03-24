@@ -35,11 +35,12 @@ func test_falling_causes_jumping_animation() -> void:
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "jumping")
 
 
-func test_jump_from_resting_decreases_y_velocity() -> void:
+func test_jump_from_resting_causes_jumpsquat_state() -> void:
 	player.state = Player.State.RESTING
-	player._jump()
+	player.inputs.jump = true
+	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.y < 0)
+	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
 func test_jump_input_from_resting_decreases_y_velocity() -> void:
