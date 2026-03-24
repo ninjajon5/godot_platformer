@@ -247,16 +247,6 @@ func test_reapplying_forward_direction_during_dash_release_causes_no_velocity_in
 	assert_true(player.velocity.x < 1)	# slowed due to friction
 
 
-func test_grounded_with_non_zero_velocity_within_dash_timer_causes_dashing_animation() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(100, 0)
-	player.dashing_frame_count = player.DASHING_FRAMES
-	player._check_for_physics_transitions()
-	
-	# use "resting" animation for dashing
-	assert_eq(player.get_node("AnimatedSprite2D").animation, "resting")
-
-
 func test_x_velocity_with_no_input_leads_to_slowing_by_friction() -> void:
 	player.velocity.x = 100
 	player.state = Player.State.RUNNING

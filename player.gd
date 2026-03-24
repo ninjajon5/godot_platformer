@@ -10,6 +10,7 @@ const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
 const FAST_FALLING_MULTIPLIER: int = 4
 const DASHING_FRAMES: int = 15
+const JUMPSQUAT_FRAMES: int = 4
 
 # inputs
 var inputs: InputReader = InputReader.new()
@@ -22,6 +23,7 @@ enum State {
 	RUN_TURNAROUND,
 	DASHING, 
 	DASH_RELEASE, 
+	JUMPSQUAT,
 	JUMPING, 
 	FALLING, 
 	FAST_FALLING 
@@ -29,6 +31,7 @@ enum State {
 const GROUNDED_INACTIONABLE_STATES: Array[State] = [State.RUN_TURNAROUND]
 var state: State
 var dashing_frame_count: int = 0
+var jumpsquat_frame_count: int = 0
 
 # physics attributes
 var on_floor: bool
@@ -69,6 +72,7 @@ func _apply_inputs_depending_on_state() -> void:
 		State.RUN_TURNAROUND: _apply_inputs_to_run_turnaround_state()
 		State.DASHING: _apply_inputs_to_dashing_state()
 		State.DASH_RELEASE: _apply_inputs_to_dash_release_state()
+		State.JUMPSQUAT: _apply_inputs_to_jumpsquat_state()
 		State.JUMPING: _apply_inputs_to_jumping_state()
 		State.FALLING: _apply_inputs_to_falling_state()
 		State.FAST_FALLING: _apply_inputs_to_fast_falling_state()
@@ -142,6 +146,13 @@ func _apply_inputs_to_dash_release_state() -> void:
 		_jump()
 
 
+func _apply_inputs_to_jumpsquat_state() -> void:
+	if jumpsquat_frame_count == JUMPSQUAT_FRAMES:
+		_jump()
+	else:
+		_jumpsquat()
+
+
 func _apply_inputs_to_jumping_state() -> void:
 	_apply_gravity(1)
 
@@ -212,9 +223,15 @@ func _dash_release() -> void:
 	dashing_frame_count = 0
 
 
+func _jumpsquat() -> void:
+	state = State.JUMPSQUAT
+	jumpsquat_frame_count += 1
+
+
 func _jump() -> void:
 	state = State.JUMPING
 	fast_falling = false
+	jumpsquat_frame_count = 0
 	velocity.y = JUMP_VELOCITY
 	$AnimatedSprite2D.play("jumping")
 

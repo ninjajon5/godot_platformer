@@ -76,7 +76,7 @@ func test_jump_input_from_dash_release_decreases_y_velocity() -> void:
 
 func test_jumpsquat_ending_causes_jumping_state() -> void:
 	player.state = Player.State.JUMPSQUAT
-	player.jumpsquat_frame_count == player.JUMPSQUAT_FRAMES
+	player.jumpsquat_frame_count = player.JUMPSQUAT_FRAMES
 	player._apply_inputs_depending_on_state()
 	
 	assert_true(player.state == Player.State.JUMPING)
