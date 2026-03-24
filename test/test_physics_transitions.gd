@@ -57,6 +57,15 @@ func test_grounded_after_fast_falling_with_no_x_velocity_and_no_input_causes_res
 	assert_eq(player.state, Player.State.RESTING)
 
 
+func test_grounded_after_falling_with_no_velocity_causes_walking_state() -> void:
+	player.on_floor = true
+	player.velocity = Vector2(5, 0)
+	player.state = Player.State.FAST_FALLING
+	player._check_for_physics_transitions()
+	
+	assert_eq(player.state, Player.State.WALKING)
+
+
 func test_grounded_with_no_velocity_or_input_causes_resting_animation() -> void:
 	player.on_floor = true
 	player.velocity = Vector2(0, 0)
