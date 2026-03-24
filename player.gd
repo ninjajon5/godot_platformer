@@ -226,6 +226,7 @@ func _dash_release() -> void:
 func _jumpsquat() -> void:
 	state = State.JUMPSQUAT
 	jumpsquat_frame_count += 1
+	$AnimatedSprite2D.play("jumpsquat")
 
 
 func _jump() -> void:
