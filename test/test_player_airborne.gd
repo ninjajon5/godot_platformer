@@ -100,6 +100,15 @@ func test_jumpsquat_ending_causes_jumping_state() -> void:
 	assert_true(player.velocity.y < 0)
 
 
+func test_jumpsquat_frame_count_above_jumpsquat_frames_causes_jumping_state() -> void:
+	player.state = Player.State.JUMPSQUAT
+	player.jumpsquat_frame_count = player.JUMPSQUAT_FRAMES + 10
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.state == Player.State.JUMPING)
+	assert_true(player.velocity.y < 0)
+
+
 func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 	player.velocity.y = -100
 	player.on_floor = false
