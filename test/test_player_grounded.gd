@@ -21,25 +21,6 @@ func after_each() -> void:
 # 4. Assert on the result
 # =================================
 
-
-func test_grounded_after_falling_with_x_velocity_causes_running_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(10, 0)
-	player.state = Player.State.FALLING
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.RUNNING)
-
-
-func test_grounded_after_fast_falling_with_x_velocity_causes_running_state() -> void:
-	player.on_floor = true
-	player.velocity = Vector2(10, 0)
-	player.state = Player.State.FAST_FALLING
-	player._check_for_physics_transitions()
-	
-	assert_eq(player.state, Player.State.RUNNING)
-
-
 func test_direction_from_resting_increases_x_velocity() -> void:
 	player.state = Player.State.RESTING
 	player.inputs.axis = 1

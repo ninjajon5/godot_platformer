@@ -60,7 +60,7 @@ func _check_for_physics_transitions() -> void:
 	elif on_floor and velocity.x == 0:
 		state = State.RESTING
 	elif state in [State.FALLING, State.FAST_FALLING] and on_floor:
-		state = State.RUNNING
+		state = State.WALKING
 
 
 func _apply_inputs_depending_on_state() -> void:
