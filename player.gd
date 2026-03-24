@@ -57,7 +57,7 @@ func _read_physics() -> void:
 func _check_for_physics_transitions() -> void:
 	if not on_floor and velocity.y >= 0 and state != State.FAST_FALLING:
 		state = State.FALLING
-	elif on_floor and velocity.x == 0 and state not in GROUNDED_INACTIONABLE_STATES:
+	elif on_floor and velocity.x == 0 and state != State.JUMPSQUAT:
 		state = State.RESTING
 	elif on_floor and state in [State.FALLING, State.FAST_FALLING]:
 		state = State.WALKING
@@ -101,6 +101,9 @@ func _apply_inputs_to_walking_state() -> void:
 		_dash()
 	else:
 		_walk()
+	
+	if inputs.jump:
+		_jumpsquat()
 
 
 func _apply_inputs_to_running_state() -> void:
