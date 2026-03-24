@@ -83,6 +83,14 @@ func test_jump_while_run_turnaround_causes_jumpsquat_state() -> void:
 	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
+func test_jumpsquat_causes_jumpsquat_animation() -> void:
+	player.get_node("AnimatedSprite2D").animation = "jumping"
+	player.state = Player.State.JUMPSQUAT
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.get_node("AnimatedSprite2D").animation, "jumpsquat")
+
+
 func test_jumpsquat_ending_causes_jumping_state() -> void:
 	player.state = Player.State.JUMPSQUAT
 	player.jumpsquat_frame_count = player.JUMPSQUAT_FRAMES
