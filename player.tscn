@@ -3,8 +3,12 @@
 [ext_resource type="Script" uid="uid://bjy0dbuitk3bd" path="res://player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://cqg5wbs2g7uv5" path="res://art/jumping_offset.png" id="2_sweqy"]
 [ext_resource type="Texture2D" uid="uid://d3m3rjudom0of" path="res://art/facing.png" id="3_2hs0m"]
+[ext_resource type="Texture2D" uid="uid://bmfaequpap6w2" path="res://art/jumpsquat_1.png" id="3_b26j0"]
 [ext_resource type="Texture2D" uid="uid://h7evie4weswt" path="res://art/walking_1_offset.png" id="4_2hs0m"]
+[ext_resource type="Texture2D" uid="uid://bmbytyprbeppd" path="res://art/jumpsquat_2.png" id="4_n7ghd"]
 [ext_resource type="Texture2D" uid="uid://bhvj0gk17y25b" path="res://art/walking_2_offset.png" id="5_1jxqw"]
+[ext_resource type="Texture2D" uid="uid://bote8krwl16ee" path="res://art/jumpsquat_3.png" id="5_nvl01"]
+[ext_resource type="Texture2D" uid="uid://b5aqqkmp2jvn0" path="res://art/jumpsquat_4.png" id="6_ivps1"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_onrkg"]
 animations = [{
@@ -14,6 +18,23 @@ animations = [{
 }],
 "loop": true,
 "name": &"jumping",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_b26j0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_n7ghd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_nvl01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ivps1")
+}],
+"loop": true,
+"name": &"jumpsquat",
 "speed": 5.0
 }, {
 "frames": [{
@@ -47,7 +68,8 @@ metadata/_edit_group_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=858547388]
 scale = Vector2(5, 5)
 sprite_frames = SubResource("SpriteFrames_onrkg")
-animation = &"resting"
+animation = &"jumpsquat"
+frame_progress = 0.39924783
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=723462392]
 position = Vector2(0, 12.5)
