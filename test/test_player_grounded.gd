@@ -230,14 +230,6 @@ func test_run_turnaround_prevents_smashing_stick() -> void:
 	assert_true(player.inputs.smash_stick_right_frame_count > player.inputs.SMASH_STICK_FRAMES)
 
 
-func test_jump_while_run_turnaround_increases_y_velocity() -> void:
-	player.state = Player.State.RUN_TURNAROUND
-	player.inputs.jump = true
-	player._apply_inputs_depending_on_state()
-	
-	assert_true(player.velocity.y < 0)
-
-
 func test_reapplying_forward_direction_during_dash_release_causes_no_velocity_increase() -> void:
 	player.state = Player.State.DASH_RELEASE
 	player.velocity.x = 1

@@ -93,7 +93,7 @@ func _apply_inputs_to_resting_state() -> void:
 		_rest()
 		
 	if inputs.jump:
-		_jump()
+		_jumpsquat()
 
 
 func _apply_inputs_to_walking_state() -> void:
@@ -113,13 +113,13 @@ func _apply_inputs_to_running_state() -> void:
 		_apply_friction()
 		
 	if inputs.jump:
-		_jump()
+		_jumpsquat()
 
 
 func _apply_inputs_to_run_turnaround_state() -> void:
 	_run_turnaround()
 	if inputs.jump:
-		_jump()
+		_jumpsquat()
 
 
 func _apply_inputs_to_dashing_state() -> void:
@@ -133,7 +133,7 @@ func _apply_inputs_to_dashing_state() -> void:
 		_apply_friction()
 		
 	if inputs.jump:
-		_jump()
+		_jumpsquat()
 
 
 func _apply_inputs_to_dash_release_state() -> void:
@@ -143,7 +143,7 @@ func _apply_inputs_to_dash_release_state() -> void:
 		_apply_friction()
 	
 	if inputs.jump:
-		_jump()
+		_jumpsquat()
 
 
 func _apply_inputs_to_jumpsquat_state() -> void:

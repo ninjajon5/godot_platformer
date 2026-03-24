@@ -14,13 +14,6 @@ func after_each() -> void:
 
 # ============================
 
-func test_resting_with_jump_causes_jumping_state() -> void:
-	player.state = Player.State.RESTING
-	player.inputs.jump = true
-	player._apply_inputs_depending_on_state()
-	
-	assert_eq(player.state, Player.State.JUMPING)
-
 
 func test_airborne_with_zero_velocity_causes_falling_state() -> void:
 	player.on_floor = false

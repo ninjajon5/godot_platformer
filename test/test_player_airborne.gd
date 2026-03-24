@@ -43,36 +43,44 @@ func test_jump_from_resting_causes_jumpsquat_state() -> void:
 	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
-func test_jump_input_from_resting_decreases_y_velocity() -> void:
+func test_jump_input_from_resting_causes_jumpsquat_state() -> void:
 	player.inputs.jump = true
 	player.state = Player.State.RESTING
 	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.y < 0)
+	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
-func test_jump_input_from_dashing_decreases_y_velocity() -> void:
+func test_jump_input_from_dashing_causes_jumpsquat_state() -> void:
 	player.inputs.jump = true
 	player.state = Player.State.DASHING
 	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.y < 0)
+	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
-func test_jump_input_from_running_decreases_y_velocity() -> void:
+func test_jump_input_from_running_causes_jumpsquat_state() -> void:
 	player.inputs.jump = true
 	player.state = Player.State.RUNNING
 	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.y < 0)
+	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
-func test_jump_input_from_dash_release_decreases_y_velocity() -> void:
+func test_jump_input_from_dash_release_causes_jumpsquat_state() -> void:
 	player.inputs.jump = true
 	player.state = Player.State.DASH_RELEASE
 	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.y < 0)
+	assert_true(player.state == Player.State.JUMPSQUAT)
+
+
+func test_jump_while_run_turnaround_causes_jumpsquat_state() -> void:
+	player.state = Player.State.RUN_TURNAROUND
+	player.inputs.jump = true
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.state == Player.State.JUMPSQUAT)
 
 
 func test_jumpsquat_ending_causes_jumping_state() -> void:
