@@ -147,7 +147,7 @@ func _apply_inputs_to_dash_release_state() -> void:
 
 
 func _apply_inputs_to_jumpsquat_state() -> void:
-	if jumpsquat_frame_count == JUMPSQUAT_FRAMES:
+	if jumpsquat_frame_count >= JUMPSQUAT_FRAMES:
 		_jump()
 	else:
 		_jumpsquat()
