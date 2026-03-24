@@ -37,7 +37,17 @@ func test_grounded_with_no_velocity_causes_resting_state() -> void:
 	player._check_for_physics_transitions()
 	
 	assert_eq(player.state, Player.State.RESTING)
+
+
+func test_grounded_with_no_velocity_during_jumpsquat_does_not_interrupt_into_resting_state() -> void:
+	player.on_floor = true
+	player.velocity = Vector2(0, 0)
+	player.state = Player.State.JUMPSQUAT
+	player._check_for_physics_transitions()
+	player._apply_inputs_depending_on_state()
 	
+	assert_eq(player.state, Player.State.JUMPSQUAT)
+
 
 func test_grounded_after_falling_with_no_x_velocity_and_no_input_causes_resting_state() -> void:
 	player.on_floor = true

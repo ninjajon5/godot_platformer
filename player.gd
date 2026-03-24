@@ -28,7 +28,7 @@ enum State {
 	FALLING, 
 	FAST_FALLING 
 }
-const GROUNDED_INACTIONABLE_STATES: Array[State] = [State.RUN_TURNAROUND]
+const GROUNDED_INACTIONABLE_STATES: Array[State] = [State.RUN_TURNAROUND, State.JUMPSQUAT]
 var state: State
 var dashing_frame_count: int = 0
 var jumpsquat_frame_count: int = 0
@@ -57,9 +57,9 @@ func _read_physics() -> void:
 func _check_for_physics_transitions() -> void:
 	if not on_floor and velocity.y >= 0 and state != State.FAST_FALLING:
 		state = State.FALLING
-	elif on_floor and velocity.x == 0:
+	elif on_floor and velocity.x == 0 and state not in GROUNDED_INACTIONABLE_STATES:
 		state = State.RESTING
-	elif state in [State.FALLING, State.FAST_FALLING] and on_floor:
+	elif on_floor and state in [State.FALLING, State.FAST_FALLING]:
 		state = State.WALKING
 
 
