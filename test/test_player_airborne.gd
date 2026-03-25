@@ -155,3 +155,11 @@ func test_jump_animation_does_not_overwrite_backflip_animation() -> void:
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "backflip")
+
+
+func test_falling_does_not_overwrite_backflip_animation() -> void:
+	player.state = Player.State.FALLING
+	player.get_node("AnimatedSprite2D").animation = "backflip"
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.get_node("AnimatedSprite2D").animation, "backflip")
