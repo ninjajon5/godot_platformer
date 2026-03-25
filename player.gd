@@ -176,7 +176,6 @@ func _apply_inputs_to_fast_falling_state() -> void:
 
 func _apply_gravity(gravity_multiplier: int) -> void:
 	velocity += gravity_vector * gravity_multiplier
-	$AnimatedSprite2D.play("jumping")
 
 
 func _apply_friction() -> void:
@@ -241,7 +240,7 @@ func _jump() -> void:
 	if _input_opposes_facing():
 		velocity.x = BACKFLIP_VELOCITY * inputs.direction
 		$AnimatedSprite2D.play("backflip")
-	else:
+	elif $AnimatedSprite2D.animation != "backlip":
 		$AnimatedSprite2D.play("jumping")
 
 
