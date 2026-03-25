@@ -8,6 +8,7 @@ const FRICTION: float = 25.0
 const ACCELERATION: float = 50.0
 const GRAVITY: float = 30.0
 const JUMP_VELOCITY: float = -600.0
+const BACKFLIP_VELOCITY: float = 100.0
 const FAST_FALLING_MULTIPLIER: int = 4
 const DASHING_FRAMES: int = 15
 const JUMPSQUAT_FRAMES: int = 4
@@ -237,6 +238,8 @@ func _jump() -> void:
 	fast_falling = false
 	jumpsquat_frame_count = 0
 	velocity.y = JUMP_VELOCITY
+	if _input_opposes_facing():
+		velocity.x = BACKFLIP_VELOCITY * inputs.direction
 	$AnimatedSprite2D.play("jumping")
 
 
@@ -246,3 +249,11 @@ func _flip_animation_based_on_direction() -> void:
 
 func _input_opposes_direction() -> bool:
 	return sign(inputs.direction) != sign(velocity.x) and inputs.direction != 0
+
+
+func _input_opposes_facing() -> bool:
+	return(
+		inputs.direction > 0 and $AnimatedSprite2D.flip_h == true
+		or
+		inputs.direction < 0 and $AnimatedSprite2D.flip_h == false
+	)

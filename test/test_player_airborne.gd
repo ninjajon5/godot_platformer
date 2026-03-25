@@ -135,4 +135,4 @@ func test_jump_while_input_opposes_facing_direction_causes_backflip() -> void:
 	player.inputs.direction = -1
 	player._apply_inputs_depending_on_state()
 	
-	assert_true(player.velocity.x < 0 )
+	assert_true(player.velocity.x == -player.BACKFLIP_VELOCITY)
