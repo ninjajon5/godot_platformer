@@ -240,7 +240,9 @@ func _jump() -> void:
 	velocity.y = JUMP_VELOCITY
 	if _input_opposes_facing():
 		velocity.x = BACKFLIP_VELOCITY * inputs.direction
-	$AnimatedSprite2D.play("jumping")
+		$AnimatedSprite2D.play("backflip")
+	else:
+		$AnimatedSprite2D.play("jumping")
 
 
 func _flip_animation_based_on_direction() -> void:
