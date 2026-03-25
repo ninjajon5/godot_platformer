@@ -29,6 +29,7 @@ func test_falling_causes_jumping_animation() -> void:
 	player.on_floor = false
 	player.state = Player.State.FALLING
 	player.inputs.crouch = false
+	player.get_node("AnimatedSprite2D").animation = "walking"
 	player._check_for_physics_transitions()
 	player._apply_inputs_depending_on_state()
 	
