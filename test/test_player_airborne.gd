@@ -125,3 +125,14 @@ func test_y_velocity_with_no_input_leads_to_slowing_by_gravity() -> void:
 	player._apply_gravity(1)
 	
 	assert_true(player.velocity.y > -100)
+
+
+func test_jump_while_input_opposes_facing_direction_causes_backflip() -> void:
+	player.velocity.x = 100
+	player.state = Player.State.JUMPSQUAT
+	player.jumpsquat_frame_count = player.JUMPSQUAT_FRAMES
+	player.inputs.axis = -1.0
+	player.inputs.direction = -1
+	player._apply_inputs_depending_on_state()
+	
+	assert_true(player.velocity.x < 0 )
