@@ -138,13 +138,20 @@ func test_jump_while_input_opposes_facing_direction_causes_backflip() -> void:
 	assert_true(player.velocity.x == -player.BACKFLIP_VELOCITY)
 
 
-
 func test_jump_while_input_opposes_facing_direction_causes_backflip_animation() -> void:
 	player.velocity.x = 100
 	player.state = Player.State.JUMPSQUAT
 	player.jumpsquat_frame_count = player.JUMPSQUAT_FRAMES
 	player.inputs.axis = -1.0
 	player.inputs.direction = -1
+	player._apply_inputs_depending_on_state()
+	
+	assert_eq(player.get_node("AnimatedSprite2D").animation, "backflip")
+
+
+func test_jump_animation_does_not_overwrite_backflip_animation() -> void:
+	player.state = Player.State.JUMPING
+	player.get_node("AnimatedSprite2D").animation = "backflip"
 	player._apply_inputs_depending_on_state()
 	
 	assert_eq(player.get_node("AnimatedSprite2D").animation, "backflip")
