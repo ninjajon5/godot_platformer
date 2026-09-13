@@ -1,6 +1,8 @@
 using Godot;
 using System;
 
+namespace Player;
+
 public partial class InputReader: RefCounted 
 {
     private const int _SmashStickFrames = 4;
