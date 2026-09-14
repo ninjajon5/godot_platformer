@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-namespace Player;
+namespace Game;
 
 public partial class InputReader: RefCounted 
 {

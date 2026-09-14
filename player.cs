@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Linq;
 
-namespace Player;
+namespace Game;
 
 /*
  * TODO
