@@ -13,6 +13,7 @@ namespace Game;
  * extract PlayerLogic into stateless class with PlayerState as only input
  * set up xUnit demo test
  * get tests passing using xUnit
+ * remove gd script files
  * pause menu
  * debug in pause menu
 */
