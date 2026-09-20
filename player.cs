@@ -7,7 +7,7 @@ namespace Game;
 /*
  * TODO
  * set up xUnit demo test
- * get tests passing using
+ * get tests passing using xUnit
  * refactor animation
  * pause menu
  * debug in pause menu
@@ -48,10 +48,10 @@ public partial class Player: CharacterBody2D {
 	public State state;
 	public int dashingFrameCount = 0;
 	public int jumpsquatFrameCount = 0;
+	public bool fastFalling = false;
 
 	// physics attributes
 	public bool onFloor;
-	public bool fastFalling = false;
 	public Vector2 gravityVector;
 
 	public override void _PhysicsProcess(double delta)
