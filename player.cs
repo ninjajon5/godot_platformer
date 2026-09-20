@@ -29,6 +29,7 @@ public partial class Player: CharacterBody2D {
 
 	// inputs
 	public InputReader inputs = new();
+    public PhysicsReader physics = new();
 
 	// state tracking
 	public enum State
@@ -50,28 +51,16 @@ public partial class Player: CharacterBody2D {
 	public int jumpsquatFrameCount = 0;
 	public bool fastFalling = false;
 
-	// physics attributes
-	public bool onFloor;
-	public Vector2 gravityVector;
-
 	public override void _PhysicsProcess(double delta)
 	{
 		inputs.ReadInputs();
-		ReadPhysics();
+		physics.ReadPhysics();
 
 		CheckForPhysicsTransitions();
 		ApplyInputsDependingOnState();
 
 		MoveAndSlide();
 	}
-
-
-	private void ReadPhysics()
-	{
-		onFloor = IsOnFloor();
-		gravityVector = new Vector2(0, _Gravity);
-	}
-
 
 	private void CheckForPhysicsTransitions()
 	{
