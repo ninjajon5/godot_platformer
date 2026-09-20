@@ -54,12 +54,18 @@ public partial class Player: CharacterBody2D {
 	public override void _PhysicsProcess(double delta)
 	{
 		inputs.ReadInputs();
-		physics.ReadPhysics(_Gravity);
+		ReadPhysics();
 
 		CheckForPhysicsTransitions();
 		ApplyInputsDependingOnState();
 
 		MoveAndSlide();
+	}
+
+	public void ReadPhysics()
+	{
+		physics.onFloor = IsOnFloor();
+		physics.gravityVector = new Vector2(0, _Gravity);
 	}
 
 	private void CheckForPhysicsTransitions()
