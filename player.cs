@@ -54,7 +54,7 @@ public partial class Player: CharacterBody2D {
 	public override void _PhysicsProcess(double delta)
 	{
 		inputs.ReadInputs();
-		physics.ReadPhysics();
+		physics.ReadPhysics(_Gravity);
 
 		CheckForPhysicsTransitions();
 		ApplyInputsDependingOnState();
