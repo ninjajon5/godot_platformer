@@ -64,15 +64,15 @@ public partial class Player: CharacterBody2D {
 
 	private void CheckForPhysicsTransitions()
 	{
-		if( !onFloor && Velocity.Y >= 0 && state != State.FastFalling )
+		if( !physics.onFloor && Velocity.Y >= 0 && state != State.FastFalling )
 		{
 			state = State.Falling;
 		}
-		else if ( onFloor && Velocity.X == 0 && state != State.Jumpsquat )
+		else if ( physics.onFloor && Velocity.X == 0 && state != State.Jumpsquat )
 		{
 			state = State.Resting;
 		}
-		else if ( onFloor && ( state == State.Falling | state == State.FastFalling ) )
+		else if ( physics.onFloor && ( state == State.Falling | state == State.FastFalling ) )
 		{
 			state = State.Walking;
 		}
@@ -276,7 +276,7 @@ public partial class Player: CharacterBody2D {
 	private void ApplyGravity(int gravityMultiplier)
 	{
 		Vector2 velocity = Velocity;
-		velocity += gravityVector * gravityMultiplier;
+		velocity += physics.gravityVector * gravityMultiplier;
 		Velocity = velocity;
 
 		if ( GetNode<AnimatedSprite2D>("AnimatedSprite2D").Animation != "backflip" )
