@@ -6,9 +6,13 @@ namespace Game;
 
 /*
  * TODO
+ * set up PlayerState to hold all non-Godot stuff
+ * make extractor function to pull Godot stuff back out (e.g. Velocity)
+ * refactor animation (should be a PlayerState attribute that's extracted)
+ * make PlayerState factory to set defaults that tests can re-use
+ * extract PlayerLogic into stateless class with PlayerState as only input
  * set up xUnit demo test
  * get tests passing using xUnit
- * refactor animation
  * pause menu
  * debug in pause menu
 */
